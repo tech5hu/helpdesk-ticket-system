@@ -33,4 +33,9 @@ def save_tickets(tickets):
             writer.writerow(ticket)
             # SDE - keeps CSV structured for maintainability
             # CS - prevents column misalignment so safer storage
-            # AI - structured output allows AI to read and predict patterns
+            # AI - structured output allows AI to read and predict patterns            
+# Load tickets when program starts
+tickets = load_tickets()
+# SDE - allows all functions to access tickets without reopening file
+# CS - reduces risk of file errors
+# AI - provides immediate data access for AI features
