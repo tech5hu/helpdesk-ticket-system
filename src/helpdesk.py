@@ -56,3 +56,36 @@ def predict_category(title):
     # AI benefit - reduces human error and speeds categorisation
     # SDE - keeps prediction logic separate for easier improvement
     # CS - avoids hardcoding categories throughout the program
+
+# ADD TICKET FUNCTION
+def add_ticket():
+    """Add a ticket with AI category prediction"""
+    ticket_id = input("Enter unique numeric ID: ")
+    title = input("Enter ticket title: ")
+    description = input("Enter description: ")
+    assignee = input("Assign to (Olivia, Ryan, Jacob, Benjamin): ")
+    severity = input("Severity (High, Medium, Low): ")
+    status = input("Status (Open, In Progress, Closed): ")
+
+    category = predict_category(title)  # AI predicts category
+
+    from datetime import datetime
+    submission_date = datetime.now().strftime("%d/%m/%Y")
+    submission_time = datetime.now().strftime("%H:%M:%S")
+
+    tickets[ticket_id] = {
+        "ID": ticket_id,
+        "Title": title,
+        "Description": description,
+        "Assignee": assignee,
+        "Severity": severity,
+        "Status": status,
+        "Category": category,
+        "Submission Date": submission_date,
+        "Submission Time": submission_time
+    }
+    save_tickets(tickets)  # Save tickets back to csv
+    print(f"Ticket added! Predicted category: {category}")
+    # SDE - keeps ticket adding logic separate and structured
+    # CS - ensures safe data storage
+    # AI - immediately shows AI prediction to user
