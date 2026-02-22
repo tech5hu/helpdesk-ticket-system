@@ -41,3 +41,11 @@ def main_menu():
             # SDE - keeps loop readable and maintainable
             # CS - input validation prevents crashes
             # AI - add_ticket predicts category automatically
+
+# START THE APP
+if __name__ == "__main__":  # only run below if executed directly
+    main_menu()  # start the main menu for user interaction
+
+    # SDE - separates function definitions from execution for testing
+    # CS - prevents accidental execution when imported
+    # AI - allows AI helper functions to be imported safely
