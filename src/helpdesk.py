@@ -39,3 +39,20 @@ tickets = load_tickets()
 # SDE - allows all functions to access tickets without reopening file
 # CS - reduces risk of file errors
 # AI - provides immediate data access for AI features
+
+# AI FEATURE
+def predict_category(title):
+    """Predict ticket category from keywords"""
+    title_lower = title.lower()  # lowercase text for simple checks
+
+    if any(word in title_lower for word in ["password", "login", "account"]):
+        return "Security"
+    elif any(word in title_lower for word in ["printer", "hardware", "microphone", "camera"]):
+        return "Hardware"
+    elif any(word in title_lower for word in ["vpn", "wifi", "network"]):
+        return "Network"
+    else:
+        return "Software"
+    # AI benefit - reduces human error and speeds categorisation
+    # SDE - keeps prediction logic separate for easier improvement
+    # CS - avoids hardcoding categories throughout the program
