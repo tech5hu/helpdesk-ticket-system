@@ -1,0 +1,13 @@
+ID,Title,Description,Assignee,Severity,Status,Category,Submission Date,Submission Time
+100,Broken Printer,"Printer not printing. Can you please assist?",Olivia Davis,Medium,In progress,Hardware,01/03/2023,09:23:12
+101,Cant sign into email,"I can't sign into my email. Please help!",Ryan Collins,High,Closed,Software,04/03/2023,14:45:58
+102,Password reset request,"Forgot my password. Can you reset it for me?",Jacob Nguyen,Low,Open,Security,07/03/2023,17:12:21
+103,Cannot connect to VPN,"I'm having trouble connecting to the VPN",Benjamin Jackson,Medium,In progress,Network,10/03/2023,10:30:41
+104,Permissions all disappeared,"I'm not able to access files. Can you please check my permissions?",Ryan Collins,Medium,In progress,Software,15/03/2023,21:05:33
+105,My apps keep crashing,"Apps keep crashing. Please help me resolve this",Ryan Collins,Low,Open,Software,20/03/2023,13:15:49
+106,I cant connect to WIFI,"Can't connect to wifi. Please assist",Benjamin Jackson,Medium,In progress,Network,23/03/2023,08:47:26
+107,Microphone not working,"Microphone not working during video calls. Need help!",Olivia Davis,Low,Open,Hardware,25/03/2023,16:22:07
+108,Cant turn camera on,"I'm not able to turn on my camera during video calls.",Olivia Davis,Low,Open,Hardware,28/03/2023,11:55:14
+109,Suspicious email,"Received a suspicious email. Need assistance in checking its authenticity",Jacob Nguyen,High,Closed,Security,29/03/2023,19:40:39
+110,Locked out of account,"Can't log in. Account appears to be locked out. Please help!",Jacob Nguyen,High,Closed,Security,31/03/2023,12:33:05
+123,Login,"Login Wont Work",Jacob,Medium,Open,Security,12/08/1999,23:06:11
