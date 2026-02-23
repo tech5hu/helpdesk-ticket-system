@@ -89,3 +89,57 @@ def add_ticket():
     # SDE - keeps ticket adding logic separate and structured
     # CS - ensures safe data storage
     # AI - immediately shows AI prediction to user
+
+# VIEW TICKET DETAILS
+def view_ticket_details(tickets):
+    """Displays full details of a selected ticket.
+       Implements input validation and safe lookup.
+    """
+    
+    # 1. Ask user for ticket ID
+    ticket_id = input("Please enter the Ticket ID: ").strip()
+    # SDE - input separated into variable for cleaner logic
+    # CS - .strip() prevents accidental spaces or injection inputs
+
+    # 2. Validate ticket ID format
+    if not ticket_id.isdigit():
+        print("Invalid Ticket ID. Must be numeric.")
+        return
+    # SDE - stops invalid data early
+    # CS - prevents program errors or unexpected behavior
+
+    # 3. Search for the ticket safely
+    found_ticket = None
+    for ticket in tickets.values():  # values() ensures access to ticket dictionaries
+        if ticket["ID"] == ticket_id:  # matches against primary key
+            found_ticket = ticket
+            break
+    if found_ticket is None:
+        print("Ticket not found. Please try again.")
+        return
+    # SDE - search logic separated, easier to maintain
+    # CS - avoids showing info for invalid IDs
+
+    # 4. Display formatted details clearly
+    print("\n=== Ticket Details ===")
+    print(f"ID: {found_ticket['ID']}")
+    print(f"Title: {found_ticket['Title']}")
+    print(f"Description: {found_ticket['Description']}")
+    print(f"Assignee: {found_ticket['Assignee']}")
+    print(f"Severity: {found_ticket['Severity']}")
+    print(f"Status: {found_ticket['Status']}")
+    print(f"Category: {found_ticket['Category']}")
+    print(f"Submission Date: {found_ticket['Submission Date']}")
+    print(f"Submission Time: {found_ticket['Submission Time']}")
+    # SDE - each field printed clearly for readability
+    # CS - only displays relevant fields safely
+
+    # AI FEATURE - highlight the high severity tickets
+    if found_ticket['Severity'].lower() == "high":
+        print("This is a HIGH severity ticket. Consider prioritising!")
+
+    # 5. Return ticket safely for further actions
+    return found_ticket
+    # SDE - return allows reusing this function for multiple workflows
+    # CS - avoids unnecessary global variable manipulation
+    
