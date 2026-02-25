@@ -1,11 +1,11 @@
-from helpdesk import tickets, add_ticket # importing ticket data and add ticket function
+from helpdesk import tickets, add_ticket  # importing ticket data and add ticket function
 
 # SHOW MENU FUNCTION
 def show_menu():
-    """Display main options to the user""" # print menu title
-    print("\nHelp Desk Menu") # SDE - separates UI from logic
-    print("1. List all tickets") # CS - safe as no sensitive info shown
-    print("2. Add a new ticket") # AI - allows AI assisted categorisation
+    """Display main options to the user"""  # print menu title
+    print("\nHelp Desk Menu")  # SDE - separates UI from logic
+    print("1. List all tickets")  # CS - safe as no sensitive info shown
+    print("2. Add a new ticket")  # AI - allows AI assisted categorisation
     print("3. Exit")
 
 # LIST TICKETS FUNCTION
@@ -33,8 +33,13 @@ def main_menu():
         elif choice == "2":
             add_ticket()
         elif choice == "3":
-            print("Exiting the application. Bye!")
-            break  # stopping the loop
+            # exit confirmation
+            confirm = input("Are you sure you want to exit? (y/n): ").lower()
+            if confirm == "y":
+                print("Exiting the application. Bye!")
+                break
+            else:
+                print("Returning to main menu...") 
         else:
             print("Invalid input. Please enter 1, 2, or 3.")
 
