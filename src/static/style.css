@@ -1,40 +1,87 @@
-/* CSS for Helpdesk System */
-
+/* General body */
 body {
-    font-family: Arial, sans-serif;  /* Simple readable font */
-    background-color: #f9f9f9;       /* Light background for reading comfort */
-    padding: 20px;                   /* Leaving space around content */
+    font-family: 'Roboto', sans-serif;
+    background-color: #1E1E2F;
+    color: #F5F5F5;
+    margin: 0;
+    padding: 20px;
 }
 
+/* Headings */
 h1, h2 {
-    color: #333;                     /* Dark headings for added clarity */
+    color: #00BFFF;
 }
 
+/* Ticket card */
+.ticket-card {
+    background-color: #2A2A3D;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Tables */
 table {
     width: 100%;
-    border-collapse: collapse;       /* Removing double borders */
-    margin-top: 20px;
+    border-collapse: collapse;
 }
-
 th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
+    padding: 12px;
     text-align: left;
 }
-
 th {
-    background-color: #eee;          /* Light grey header */
+    background-color: #2A2A3D;
+    color: #00BFFF;
+}
+tr:nth-child(even) {
+    background-color: #252536;
+}
+tr:hover {
+    background-color: #32324B;
 }
 
-form input, form select, form textarea {
-    margin: 5px 0;
+/* Buttons */
+button, .btn {
+    background-color: #00BFFF;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+button:hover, .btn:hover {
+    background-color: #009ACD;
+    box-shadow: 0 0 8px #00BFFF;
+}
+
+/* Input / Form */
+input, select, textarea {
+    background-color: #2A2A3D;
+    color: #F5F5F5;
+    border: 1px solid #444;
     padding: 8px;
+    border-radius: 5px;
     width: 100%;
-    box-sizing: border-box;          /* Preventing overflow on page */
+    margin-bottom: 10px;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #00BFFF;
+    box-shadow: 0 0 5px #00BFFF;
 }
 
-form button {
-    padding: 8px 12px;
-    margin-top: 10px;
-    cursor: pointer;                 /* Show user a clickable button */
+/* Severity badges */
+.badge-high { color: #FF4C4C; font-weight: bold; }
+.badge-medium { color: #FFA500; font-weight: bold; }
+.badge-low { color: #4CAF50; font-weight: bold; }
+
+/* Links */
+a {
+    color: #00BFFF;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
 }
