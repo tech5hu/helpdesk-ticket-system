@@ -9,18 +9,22 @@
 <body>
     <h1>Update Ticket</h1>
 
-    <!-- Show form for one ticket -->
-    <form method="POST">
-        <!-- Each input shows current value for easy editing -->
+    <!-- Form for user to edit the ticket details -->
+    <form method="POST" action="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}">
+        
+        <!-- Title of ticket -->
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" value="{{ ticket['Title'] }}" required><br>
 
+        <!-- Description of issue -->
         <label for="description">Description:</label>
         <textarea id="description" name="description" required>{{ ticket['Description'] }}</textarea><br>
 
+        <!-- Person responsible for ticket -->
         <label for="assignee">Assignee:</label>
         <input type="text" id="assignee" name="assignee" value="{{ ticket['Assignee'] }}" required><br>
 
+        <!-- How serious issue is -->
         <label for="severity">Severity:</label>
         <select id="severity" name="severity" required>
             <option value="Low" {% if ticket['Severity'] == 'Low' %}selected{% endif %}>Low</option>
@@ -28,6 +32,7 @@
             <option value="High" {% if ticket['Severity'] == 'High' %}selected{% endif %}>High</option>
         </select><br>
 
+        <!-- Current progress of the ticket -->
         <label for="status">Status:</label>
         <select id="status" name="status" required>
             <option value="Open" {% if ticket['Status'] == 'Open' %}selected{% endif %}>Open</option>
@@ -35,12 +40,16 @@
             <option value="Closed" {% if ticket['Status'] == 'Closed' %}selected{% endif %}>Closed</option>
         </select><br>
 
+        <!-- Type of issue (eg Software, Hardware, Network) -->
         <label for="category">Category:</label>
         <input type="text" id="category" name="category" value="{{ ticket['Category'] }}" required><br>
 
+        <!-- Button to save the changes -->
         <button type="submit">Update Ticket</button>
     </form>
 
-    <a href="/">Back to main menu</a> <!-- Link for return -->
+    <!-- Link to go back to the main page -->
+    <a href="/">Back to main menu</a>
+
 </body>
 </html>
