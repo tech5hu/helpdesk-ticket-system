@@ -9,8 +9,10 @@
 <body>
     <h1>Delete Ticket</h1>
 
-    <!-- Show ticket info so user can verify -->
-    <p>Are you sure you want to delete this ticket?</p>
+    <!-- Ask user to confirm before removing the ticket -->
+    <p>Are you sure you want to permanently delete this ticket?</p>
+
+    <!-- Show ticket details so user knows what they are deleting -->
     <ul>
         <li><strong>ID:</strong> {{ ticket['ID'] }}</li>
         <li><strong>Title:</strong> {{ ticket['Title'] }}</li>
@@ -21,12 +23,14 @@
         <li><strong>Category:</strong> {{ ticket['Category'] }}</li>
     </ul>
 
-    <!-- Simple form to confirm deletion -->
-    <form method="POST">
+    <!-- Form to confirm whether user wants to delete the ticket -->
+    <form method="POST" action="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}">
         <button type="submit" name="confirm" value="yes">Yes, Delete</button>
         <button type="submit" name="confirm" value="no">Cancel</button>
     </form>
 
-    <a href="/">Back to main menu</a> <!-- Easy navigation back -->
+    <!-- Link to return to the homepage -->
+    <a href="/">Back to main menu</a>
+
 </body>
 </html>
