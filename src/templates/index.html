@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Help Desk Tickets</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
         h1 { color: #333; }
+        a { margin-right: 10px; } /* small spacing between links */
     </style>
 </head>
 <body>
@@ -20,17 +21,25 @@
             <th>Title</th>
             <th>Category</th>
             <th>Status</th>
+            <th>Actions</th> <!-- new column for buttons -->
         </tr>
         {% for ticket in tickets %}
         <tr>
             <td>{{ ticket['ID'] }}</td>  
             <td>{{ ticket['Title'] }}</td>  
             <td>{{ ticket['Category'] }}</td>  
-            <td>{{ ticket['Status'] }}</td> 
+            <td>{{ ticket['Status'] }}</td>
+            <td>
+                <!-- Links to other pages -->
+                <a href="{{ url_for('view_tickets_web') }}">View</a>
+                <a href="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}">Update</a>
+                <a href="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}">Delete</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
 
+    <br>
     <a href="{{ url_for('add_ticket_web') }}">Add New Ticket</a>  
 </body>
 </html>
