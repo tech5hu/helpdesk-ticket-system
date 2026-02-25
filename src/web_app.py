@@ -49,10 +49,12 @@ def add_ticket_web():
     return render_template("add.html")
 
 # Page to view all tickets in detail
-@app.route("/view")
-def view_tickets_web():
-    # Show all tickets using the view.html template
-    return render_template("view.html", tickets=tickets.values())
+@app.route("/view/<ticket_id>")
+def view_ticket_web(ticket_id):
+    ticket = tickets.get(ticket_id)  # get ticket by ID
+    if not ticket:
+        return f"Ticket {ticket_id} not found."
+    return render_template("view.html", ticket=ticket)
 
 # Page to update an existing ticket
 @app.route("/update/<ticket_id>", methods=["GET", "POST"])

@@ -31,7 +31,7 @@
             <td>{{ ticket['Status'] }}</td>
             <td>
                 <!-- Links to other pages -->
-                <a href="{{ url_for('view_tickets_web') }}">View</a>
+                <a href="{{ url_for('view_ticket_web', ticket_id=ticket.ID) }}">View</a>
                 <a href="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}">Update</a>
                 <a href="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}">Delete</a>
             </td>

@@ -1,4 +1,3 @@
-<!-- templates/view.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,20 +8,17 @@
 <body>
     <h1>Ticket Details</h1>
 
-    <!-- Looping through all tickets and display each -->
-    {% for ticket in tickets %}
-        <div class="ticket-card">
-            <p><strong>ID:</strong> {{ ticket['ID'] }}</p>
-            <p><strong>Title:</strong> {{ ticket['Title'] }}</p>
-            <p><strong>Description:</strong> {{ ticket['Description'] }}</p>
-            <p><strong>Assignee:</strong> {{ ticket['Assignee'] }}</p>
-            <p><strong>Severity:</strong> {{ ticket['Severity'] }}</p>
-            <p><strong>Status:</strong> {{ ticket['Status'] }}</p>
-            <p><strong>Category:</strong> {{ ticket['Category'] }}</p>
-            <p><strong>Submitted:</strong> {{ ticket['Submission Date'] }} {{ ticket['Submission Time'] }}</p>
-        </div>
-    {% endfor %}
+    <div class="ticket-card">
+        <p><strong>ID:</strong> {{ ticket['ID'] }}</p>
+        <p><strong>Title:</strong> {{ ticket['Title'] }}</p>
+        <p><strong>Description:</strong> {{ ticket['Description'] }}</p>
+        <p><strong>Assignee:</strong> {{ ticket['Assignee'] }}</p>
+        <p><strong>Severity:</strong> {{ ticket['Severity'] }}</p>
+        <p><strong>Status:</strong> {{ ticket['Status'] }}</p>
+        <p><strong>Category:</strong> {{ ticket['Category'] }}</p>
+        <p><strong>Submitted:</strong> {{ ticket['Submission Date'] }} {{ ticket['Submission Time'] }}</p>
+    </div>
 
-    <a href="/">Back to main menu</a> <!-- back to home page -->
+    <a href="/">Back to main menu</a>
 </body>
 </html>
