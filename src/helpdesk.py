@@ -1,39 +1,83 @@
-import csv # let python read/write csv files
-from pathlib import Path # helps python safely locate files on any computer
+import csv  # let python read/write csv files
+from pathlib import Path  # helps python safely locate files on any computer
+from datetime import datetime  # for timestamps and submission time
 
 # SET UP DATA FILE
-# the file whee all tickets are stored
+# the file where all tickets are stored
 DATA_FILE = Path(__file__).parent.parent / "data" / "helpdesk.csv"
-# SDE - single variable for file path makes code easier to maintain
-# CS - avoids hardcoding file paths everywhere, safer for data access
-# AI - lets AI access data file for analysis
+LOG_FILE = Path(__file__).parent.parent / "logs" / "error.log"
 
 # LOAD FUNCTION
 def load_tickets():
-    """Load tickets from CSV into memory"""
+    """Load tickets from CSV into memory, skip the corrupt rows, log any errors + return dict of valid tickets"""
     tickets = {}  # start with empty dictionary
-    if DATA_FILE.exists():  # check the file actually exists first
-        with open(DATA_FILE, "r", newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)  # read rows as dictionaries
-            for row in reader:
-                tickets[row["ID"]] = row  # store by ticket ID
-                # SDE - keeps tickets easy to access by ID
-                # CS - avoids manual string splitting, safer
-                # AI - structured data is easy for AI analysis
+
+    if not DATA_FILE.exists():
+        print(f"No data file found at {DATA_FILE}. Starting with empty tickets.")
+        return tickets
+
+    # Making sure the log folder exists
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(DATA_FILE, "r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            ticket_id = row.get("ID", "").strip()
+
+            # Check 1: ID must exist and has to be numeric
+            if not ticket_id.isdigit():
+                log_error(f"Invalid or missing ID: {ticket_id} - row skipped")
+                continue
+
+            # Check 2: Duplicate ID
+            if ticket_id in tickets:
+                log_error(f"Duplicate primary key {ticket_id} - row skipped")
+                continue
+
+            # Check 3: Required fields
+            required_fields = ["Title", "Description", "Assignee", "Severity", "Status", "Category", "Submission Date", "Submission Time"]
+            missing = [field for field in required_fields if not row.get(field)]
+            if missing:
+                log_error(f"Ticket {ticket_id} missing fields: {missing} - row skipped")
+                continue
+
+            # Check 4: Severity & Status validation
+            if row["Severity"].lower() not in ["low", "medium", "high"]:
+                log_error(f"Ticket {ticket_id} has invalid severity '{row['Severity']}' - row skipped")
+                continue
+            if row["Status"].lower() not in ["open", "in progress", "closed"]:
+                log_error(f"Ticket {ticket_id} has invalid status '{row['Status']}' - row skipped")
+                continue
+
+            # All checks passed? THEN add to tickets
+            tickets[ticket_id] = row  # SDE - keeps data structured for easy access
     return tickets
+
+def log_error(message):
+    """Write errors to log file with timestamp."""
+    with open(LOG_FILE, "a", encoding="utf-8") as log:
+        log.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}\n")
+        # SDE - separates error logging from main logic
+        # CS - keeps track of data issues safely for auditing
+        # AI - log format is structured for future AI analysis
 
 # SAVE FUNCTION
 def save_tickets(tickets):
     """Save tickets from memory back to CSV"""
-    fieldnames = ["ID","Title","Description","Assignee","Severity","Status","Category","Submission Date","Submission Time"]
+    fieldnames = ["ID", "Title", "Description", "Assignee", "Severity", "Status", "Category", "Submission Date", "Submission Time"]
+
+    # Making sure the data folder exists
+    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+
     with open(DATA_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()  # write column names
         for ticket in tickets.values():
             writer.writerow(ticket)
-            # SDE - keeps CSV structured for maintainability
+            # SDE - keeps CSV structured for maintainenance
             # CS - prevents column misalignment so safer storage
-            # AI - structured output allows AI to read and predict patterns            
+            # AI - structured output allows AI to read and predict patterns
+
 # Load tickets when program starts
 tickets = load_tickets()
 # SDE - allows all functions to access tickets without reopening file
@@ -59,20 +103,32 @@ def predict_category(title):
 
 # ADD TICKET FUNCTION
 def add_ticket():
-    """Add a ticket with AI category prediction"""
-    ticket_id = input("Enter unique numeric ID: ")
-    title = input("Enter ticket title: ")
-    description = input("Enter description: ")
-    assignee = input("Assign to (Olivia, Ryan, Jacob, Benjamin): ")
-    severity = input("Severity (High, Medium, Low): ")
-    status = input("Status (Open, In Progress, Closed): ")
+    """Add a ticket with AI category prediction and ID validation"""
+    # 1. Ensure unique numeric ID
+    while True:
+        ticket_id = input("Enter unique numeric ID: ").strip()
+        if not ticket_id.isdigit():
+            print("ID must be numeric. Try again.")
+        elif ticket_id in tickets:
+            print("ID already exists. Try a different one.")
+        else:
+            break
 
-    category = predict_category(title)  # AI predicts category
+    # 2. Collect ticket info
+    title = input("Enter ticket title: ").strip()
+    description = input("Enter description: ").strip()
+    assignee = input("Assign to (Olivia, Ryan, Jacob, Benjamin): ").strip()
+    severity = input("Severity (High, Medium, Low): ").strip().title()
+    status = input("Status (Open, In Progress, Closed): ").strip().title()
 
-    from datetime import datetime
+    # 3. AI predicts category
+    category = predict_category(title).title()
+
+    # 4. Add current date/time
     submission_date = datetime.now().strftime("%d/%m/%Y")
     submission_time = datetime.now().strftime("%H:%M:%S")
 
+    # 5. Add to tickets
     tickets[ticket_id] = {
         "ID": ticket_id,
         "Title": title,
@@ -84,7 +140,9 @@ def add_ticket():
         "Submission Date": submission_date,
         "Submission Time": submission_time
     }
-    save_tickets(tickets)  # Save tickets back to csv
+
+    # 6. Save
+    save_tickets(tickets)
     print(f"Ticket added! Predicted category: {category}")
     # SDE - keeps ticket adding logic separate and structured
     # CS - ensures safe data storage
@@ -92,159 +150,104 @@ def add_ticket():
 
 # VIEW TICKET DETAILS
 def view_ticket_details(tickets):
-    """Displays full details of a selected ticket.
-       Implements input validation and safe lookup.
-    """
-    
-    # 1. Ask user for ticket ID
+    """Displays full details of a selected ticket. Implements input validation and safe lookup."""
     ticket_id = input("Please enter the Ticket ID: ").strip()
     # SDE - input separated into variable for cleaner logic
     # CS - .strip() prevents accidental spaces or injection inputs
 
-    # 2. Validate ticket ID format
     if not ticket_id.isdigit():
         print("Invalid Ticket ID. Must be numeric.")
         return
     # SDE - stops invalid data early
     # CS - prevents program errors or unexpected behavior
 
-    # 3. Search for the ticket safely
-    found_ticket = None
-    for ticket in tickets.values():  # values() ensures access to ticket dictionaries
-        if ticket["ID"] == ticket_id:  # matches against primary key
-            found_ticket = ticket
-            break
-    if found_ticket is None:
+    # Safe lookup
+    found_ticket = tickets.get(ticket_id)
+    if not found_ticket:
         print("Ticket not found. Please try again.")
         return
-    # SDE - search logic separated, easier to maintain
-    # CS - avoids showing info for invalid IDs
 
-    # 4. Display formatted details clearly
+    # Display ticket details clearly
     print("\n=== Ticket Details ===")
-    print(f"ID: {found_ticket['ID']}")
-    print(f"Title: {found_ticket['Title']}")
-    print(f"Description: {found_ticket['Description']}")
-    print(f"Assignee: {found_ticket['Assignee']}")
-    print(f"Severity: {found_ticket['Severity']}")
-    print(f"Status: {found_ticket['Status']}")
-    print(f"Category: {found_ticket['Category']}")
-    print(f"Submission Date: {found_ticket['Submission Date']}")
-    print(f"Submission Time: {found_ticket['Submission Time']}")
-    # SDE - each field printed clearly for readability
-    # CS - only displays relevant fields safely
+    for key, value in found_ticket.items():
+        print(f"{key}: {value}")
+    # SDE - readable display
+    # CS - only shows safe info
 
     # AI FEATURE - highlight the high severity tickets
     if found_ticket['Severity'].lower() == "high":
         print("This is a HIGH severity ticket. Consider prioritising!")
 
-    # 5. Return ticket safely for further actions
     return found_ticket
-    # SDE - return allows reusing this function for multiple workflows
+    # SDE - return allows reusing this function
     # CS - avoids unnecessary global variable manipulation
 
 # DELETE TICKET
 def delete_ticket(tickets):
     """Delete a ticket by ID after confirmation"""
-    
-    # 1. Ask for Ticket ID
     ticket_id = input("Enter the Ticket ID to delete: ").strip()
-    # SDE - input stored in variable, keeps logic clean
-    # CS - .strip() prevents accidental spaces or injection
-
-    # 2. Validate ID is numeric
     if not ticket_id.isdigit():
         print("Invalid Ticket ID. Must be numeric.")
         return
-    # SDE - early exit for invalid inputs
-    # CS - prevents errors from bad inputs
 
-    # 3. Look for ticket in datastore
     found_ticket = tickets.get(ticket_id)
     if not found_ticket:
         print("Ticket not found. Please try again.")
         return
-    # SDE - safe lookup using dictionary
-    # CS - avoids showing wrong or sensitive info
 
     # AI enhancement - warn if high severity
     if found_ticket['Severity'].lower() == "high":
-        print(" Warning: This is a HIGH severity ticket. Be careful before deleting!")
+        print("Warning: This is a HIGH severity ticket. Be careful before deleting!")
 
-    # 4. Confirm deletion with user
     confirm = input(f"Are you sure you want to delete ticket '{found_ticket['Title']}'? (yes/no): ").strip().lower()
     if confirm != "yes":
         print("Deletion cancelled.")
         return
-    # SDE - confirmation prevents accidental deletion
-    # CS - prevents data loss from wrong inputs
 
-    # 5. Delete ticket and save
-    del tickets[ticket_id]  # remove from dict
-    save_tickets(tickets)   # write updated data back to CSV
+    del tickets[ticket_id]
+    save_tickets(tickets)
     print(f"Ticket {ticket_id} deleted successfully.")
-    # SDE - separates deletion from saving
-    # CS - ensures persistent deletion is safe and controlled
-
-    # return deleted ticket for logging 
     return found_ticket
 
-# UPDATE TICKET WITH VALIDATION AND LOGGING
+# UPDATE TICKET
 def update_ticket(tickets):
     """Amend an existing ticket safely with validation, logging and AI suggestions."""
-
-    # 1. Ask for Ticket ID
     ticket_id = input("Enter the Ticket ID to update: ").strip()
-    # SDE - user input separated from logic
-    # CS - ensure numeric input to prevent errors or injection
-
-    # 2. Validate format
     if not ticket_id.isdigit():
         print("Invalid Ticket ID. Must be numeric.")
         return
 
-    # 3. Check ticket exists
     ticket = tickets.get(ticket_id)
     if not ticket:
         print("Ticket not found.")
         return
 
-    # 3a. Prevent updates if ticket is closed
     if ticket["Status"].lower() == "closed":
         print("Cannot update a closed ticket.")
-        # SDE - following business rules
-        # CS - prevents unauthorised changes to finalised records
         return
 
-    # 4. Display current ticket details
     print("\nCurrent Ticket Details:")
     for key, value in ticket.items():
         print(f"{key}: {value}")
 
-    # 5. Ask user which field to update
     field = input(
         "\nEnter the field you want to update "
         "(Title, Description, Assignee, Severity, Status, Category): "
     ).strip().title()
 
-    # Prevent updating primary key
     if field == "ID":
         print("Primary key cannot be modified.")
         return
-
     if field not in ticket:
         print("Invalid field selected.")
         return
 
-    # 6. Ask user for new value
     new_value = input(f"Enter new value for {field}: ").strip()
     if new_value == "":
         print("Field cannot be empty.")
         return
-    # SDE - validate before changing internal data
-    # CS - prevents corrupt or empty data
 
-    # Validation
+    # Validation for specific fields
     if field == "Severity":
         if new_value.lower() not in ["low", "medium", "high"]:
             print("Invalid severity. Must be Low, Medium, or High.")
@@ -257,31 +260,22 @@ def update_ticket(tickets):
             return
         new_value = new_value.title()
 
-    # AI FEATURE
+    # AI alerts
     if field == "Description":
         if "password" in new_value.lower() or "breach" in new_value.lower():
             print("AI Alert: This update may involve sensitive security information.")
-            # AI - flag sensitive keywords for human attention
     if field == "Severity" and new_value.lower() == "high":
         print("AI Suggestion: Consider escalating this ticket to senior support.")
-        # AI - recommend escalation based on severity
 
-    # 7. Apply update
     old_value = ticket[field]
     ticket[field] = new_value
-    # SDE - clearly track changes before applying
-
-    # 8. Save changes
     save_tickets(tickets)
 
-    # 9. Log entry
-    from datetime import datetime
+    # Logging
     log_entry = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Ticket {ticket_id}: Field '{field}' updated from '{old_value}' to '{new_value}'\n"
-    with open("logs/audit.log", "a", encoding="utf-8") as f:
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(log_entry)
-        # SDE - separate logging keeps code maintainable
-        # CS - tracks changes for accountability
 
     print("Ticket updated successfully. Changes recorded in the log.")
-
     return ticket
