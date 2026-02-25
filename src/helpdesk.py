@@ -188,3 +188,100 @@ def delete_ticket(tickets):
 
     # return deleted ticket for logging 
     return found_ticket
+
+# UPDATE TICKET WITH VALIDATION AND LOGGING
+def update_ticket(tickets):
+    """Amend an existing ticket safely with validation, logging and AI suggestions."""
+
+    # 1. Ask for Ticket ID
+    ticket_id = input("Enter the Ticket ID to update: ").strip()
+    # SDE - user input separated from logic
+    # CS - ensure numeric input to prevent errors or injection
+
+    # 2. Validate format
+    if not ticket_id.isdigit():
+        print("Invalid Ticket ID. Must be numeric.")
+        return
+
+    # 3. Check ticket exists
+    ticket = tickets.get(ticket_id)
+    if not ticket:
+        print("Ticket not found.")
+        return
+
+    # 3a. Prevent updates if ticket is closed
+    if ticket["Status"].lower() == "closed":
+        print("Cannot update a closed ticket.")
+        # SDE - following business rules
+        # CS - prevents unauthorised changes to finalised records
+        return
+
+    # 4. Display current ticket details
+    print("\nCurrent Ticket Details:")
+    for key, value in ticket.items():
+        print(f"{key}: {value}")
+
+    # 5. Ask user which field to update
+    field = input(
+        "\nEnter the field you want to update "
+        "(Title, Description, Assignee, Severity, Status, Category): "
+    ).strip().title()
+
+    # Prevent updating primary key
+    if field == "ID":
+        print("Primary key cannot be modified.")
+        return
+
+    if field not in ticket:
+        print("Invalid field selected.")
+        return
+
+    # 6. Ask user for new value
+    new_value = input(f"Enter new value for {field}: ").strip()
+    if new_value == "":
+        print("Field cannot be empty.")
+        return
+    # SDE - validate before changing internal data
+    # CS - prevents corrupt or empty data
+
+    # Validation
+    if field == "Severity":
+        if new_value.lower() not in ["low", "medium", "high"]:
+            print("Invalid severity. Must be Low, Medium, or High.")
+            return
+        new_value = new_value.title()
+
+    if field == "Status":
+        if new_value.lower() not in ["open", "in progress", "closed"]:
+            print("Invalid status.")
+            return
+        new_value = new_value.title()
+
+    # AI FEATURE
+    if field == "Description":
+        if "password" in new_value.lower() or "breach" in new_value.lower():
+            print("AI Alert: This update may involve sensitive security information.")
+            # AI - flag sensitive keywords for human attention
+    if field == "Severity" and new_value.lower() == "high":
+        print("AI Suggestion: Consider escalating this ticket to senior support.")
+        # AI - recommend escalation based on severity
+
+    # 7. Apply update
+    old_value = ticket[field]
+    ticket[field] = new_value
+    # SDE - clearly track changes before applying
+
+    # 8. Save changes
+    save_tickets(tickets)
+
+    # 9. Log entry
+    from datetime import datetime
+    log_entry = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Ticket {ticket_id}: Field '{field}' updated from '{old_value}' to '{new_value}'\n"
+    with open("logs/audit.log", "a", encoding="utf-8") as f:
+        f.write(log_entry)
+        # SDE - separate logging keeps code maintainable
+        # CS - tracks changes for accountability
+
+    print("Ticket updated successfully. Changes recorded in the log.")
+
+    return ticket
