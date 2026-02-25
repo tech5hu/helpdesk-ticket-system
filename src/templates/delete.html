@@ -1,4 +1,3 @@
-<!-- templates/delete.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,28 +8,32 @@
 <body>
     <h1>Delete Ticket</h1>
 
-    <!-- Ask user to confirm before removing the ticket -->
-    <p>Are you sure you want to permanently delete this ticket?</p>
+    <div class="ticket-card">
+        <p>Are you sure you want to delete this ticket?</p>
+        <ul>
+            <li><strong>ID:</strong> {{ ticket['ID'] }}</li>
+            <li><strong>Title:</strong> {{ ticket['Title'] }}</li>
+            <li><strong>Description:</strong> {{ ticket['Description'] }}</li>
+            <li><strong>Assignee:</strong> {{ ticket['Assignee'] }}</li>
+            <li><strong>Severity:</strong>
+                {% if ticket['Severity'].lower() == 'low' %}
+                    <span class="badge-low">Low</span>
+                {% elif ticket['Severity'].lower() == 'medium' %}
+                    <span class="badge-medium">Medium</span>
+                {% else %}
+                    <span class="badge-high">High</span>
+                {% endif %}
+            </li>
+            <li><strong>Status:</strong> {{ ticket['Status'] }}</li>
+            <li><strong>Category:</strong> {{ ticket['Category'] }}</li>
+        </ul>
+    </div>
 
-    <!-- Show ticket details so user knows what they are deleting -->
-    <ul>
-        <li><strong>ID:</strong> {{ ticket['ID'] }}</li>
-        <li><strong>Title:</strong> {{ ticket['Title'] }}</li>
-        <li><strong>Description:</strong> {{ ticket['Description'] }}</li>
-        <li><strong>Assignee:</strong> {{ ticket['Assignee'] }}</li>
-        <li><strong>Severity:</strong> {{ ticket['Severity'] }}</li>
-        <li><strong>Status:</strong> {{ ticket['Status'] }}</li>
-        <li><strong>Category:</strong> {{ ticket['Category'] }}</li>
-    </ul>
-
-    <!-- Form to confirm whether user wants to delete the ticket -->
-    <form method="POST" action="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}">
-        <button type="submit" name="confirm" value="yes">Yes, Delete</button>
-        <button type="submit" name="confirm" value="no">Cancel</button>
+    <form method="POST">
+        <button type="submit" name="confirm" value="yes" class="btn">Yes, Delete</button>
+        <button type="submit" name="confirm" value="no" class="btn">Cancel</button>
     </form>
 
-    <!-- Link to return to the homepage -->
-    <a href="/">Back to main menu</a>
-
+    <a href="/" class="btn">Back to Tickets</a>
 </body>
 </html>

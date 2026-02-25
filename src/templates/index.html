@@ -2,44 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Help Desk Tickets</title>
+    <title>Helpdesk Tickets</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        h1 { color: #333; }
-        a { margin-right: 10px; } /* small spacing between links */
-    </style>
 </head>
 <body>
     <h1>All Tickets</h1>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th>Actions</th> <!-- new column for buttons -->
-        </tr>
-        {% for ticket in tickets %}
-        <tr>
-            <td>{{ ticket['ID'] }}</td>  
-            <td>{{ ticket['Title'] }}</td>  
-            <td>{{ ticket['Category'] }}</td>  
-            <td>{{ ticket['Status'] }}</td>
-            <td>
-                <!-- Links to other pages -->
-                <a href="{{ url_for('view_ticket_web', ticket_id=ticket.ID) }}">View</a>
-                <a href="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}">Update</a>
-                <a href="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
 
-    <br>
-    <a href="{{ url_for('add_ticket_web') }}">Add New Ticket</a>  
+    <a href="/add" class="btn">Add New Ticket</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Assignee</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket['ID'] }}</td>
+                <td>{{ ticket['Title'] }}</td>
+                <td>{{ ticket['Assignee'] }}</td>
+                <td>
+                    {% if ticket['Severity'].lower() == 'low' %}
+                        <span class="badge-low">Low</span>
+                    {% elif ticket['Severity'].lower() == 'medium' %}
+                        <span class="badge-medium">Medium</span>
+                    {% else %}
+                        <span class="badge-high">High</span>
+                    {% endif %}
+                </td>
+                <td>{{ ticket['Status'] }}</td>
+                <td>{{ ticket['Category'] }}</td>
+                <td>
+                    <a href="/view/{{ ticket['ID'] }}" class="btn">View</a>
+                    <a href="/update/{{ ticket['ID'] }}" class="btn">Update</a>
+                    <a href="/delete/{{ ticket['ID'] }}" class="btn">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

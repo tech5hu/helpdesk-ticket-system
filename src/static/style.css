@@ -1,87 +1,152 @@
-/* General body */
+/* GENERAL LAYOUT */
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #1E1E2F;
-    color: #F5F5F5;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #F5F6FA; /* soft, balanced light */
+    color: #2E2E2E; /* dark gray for easy reading */
     margin: 0;
-    padding: 20px;
+    padding: 24px;
 }
 
-/* Headings */
-h1, h2 {
-    color: #00BFFF;
+/* HEADERS */
+h1 {
+    text-align: center;
+    font-weight: 600;
+    font-size: 2.2rem;
+    color: #2E3A59; /* deep slate accent */
+    margin-bottom: 24px;
 }
 
-/* Ticket card */
-.ticket-card {
-    background-color: #2A2A3D;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+/* BUTTONS */
+.btn {
+    display: inline-block;
+    padding: 8px 18px;
+    background-color: #007BFF; /* primary tech blue */
+    color: #fff;
+    border: none;
+    border-radius: 6px; /* subtle corner radius */
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.25s ease, transform 0.15s ease;
 }
 
-/* Tables */
+.btn:hover {
+    background-color: #005FCC;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+}
+
+/* TABLES */
 table {
     width: 100%;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 12px;
-    text-align: left;
-}
-th {
-    background-color: #2A2A3D;
-    color: #00BFFF;
-}
-tr:nth-child(even) {
-    background-color: #252536;
-}
-tr:hover {
-    background-color: #32324B;
-}
-
-/* Buttons */
-button, .btn {
-    background-color: #00BFFF;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
     border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-button:hover, .btn:hover {
-    background-color: #009ACD;
-    box-shadow: 0 0 8px #00BFFF;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(46, 58, 89, 0.08);
 }
 
-/* Input / Form */
-input, select, textarea {
-    background-color: #2A2A3D;
-    color: #F5F5F5;
-    border: 1px solid #444;
-    padding: 8px;
-    border-radius: 5px;
+th, td {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+}
+
+th {
+    background: #E8EFFF; /* light blue header row */
+    color: #2E3A59;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background: #F8F9FB;
+}
+
+tr:hover {
+    background: #E4E9F5;
+}
+
+/* SEVERITY BADGES */
+.badge-low {
+    background: #28A745; /* green */
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-medium {
+    background: #FFC107; /* amber */
+    color: #2E2E2E;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-high {
+    background: #DC3545; /* red */
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* FORMS */
+input[type="text"],
+textarea,
+select {
     width: 100%;
-    margin-bottom: 10px;
+    padding: 10px 14px;
+    margin: 8px 0 14px 0;
+    border: 1px solid #CED4DA;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.25s ease, box-shadow 0.2s ease;
 }
-input:focus, select:focus, textarea:focus {
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
     outline: none;
-    border-color: #00BFFF;
-    box-shadow: 0 0 5px #00BFFF;
 }
 
-/* Severity badges */
-.badge-high { color: #FF4C4C; font-weight: bold; }
-.badge-medium { color: #FFA500; font-weight: bold; }
-.badge-low { color: #4CAF50; font-weight: bold; }
+/* TICKET CARDS (for detailed view) */
+.ticket-card {
+    background: #ffffff;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(46, 58, 89, 0.07);
+    transition: box-shadow 0.25s ease, transform 0.15s ease;
+}
 
-/* Links */
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(46, 58, 89, 0.1);
+}
+
+/* LINKS */
 a {
-    color: #00BFFF;
+    color: #007BFF;
     text-decoration: none;
+    font-weight: 500;
 }
+
 a:hover {
     text-decoration: underline;
+}
+
+/* MEDIA ADJUSTMENTS */
+@media (max-width: 768px) {
+    table, th, td {
+        font-size: 0.9rem;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
 }
