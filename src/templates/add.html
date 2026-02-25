@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Ticket</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
+        label { font-weight: bold; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Add a New Ticket</h1>
+    <form method="POST">
+        <label>Title:</label>
+        <input type="text" name="title" required>
+
+        <label>Description:</label>
+        <textarea name="description" required></textarea>
+
+        <label>Assignee:</label>
+        <select name="assignee" required>
+            <option>Olivia</option>
+            <option>Ryan</option>
+            <option>Jacob</option>
+            <option>Benjamin</option>
+        </select>
+
+        <label>Severity:</label>
+        <select name="severity" required>
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+        </select>
+
+        <label>Status:</label>
+        <select name="status" required>
+            <option>Open</option>
+            <option>In Progress</option>
+            <option>Closed</option>
+        </select>
+
+        <button type="submit">Add Ticket</button>
+    </form>
+
+    <p><a href="/">Back to all tickets</a></p>  <!-- go back to main page -->
+</body>
+</html>
