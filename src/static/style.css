@@ -1,7 +1,40 @@
-body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }
-h1 { color: #333; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-th { background-color: #eee; }
-form input, form select { margin: 5px 0; padding: 5px; width: 100%; }
-form button { padding: 8px 12px; margin-top: 10px; }
+/* CSS for Helpdesk System */
+
+body {
+    font-family: Arial, sans-serif;  /* Simple readable font */
+    background-color: #f9f9f9;       /* Light background for reading comfort */
+    padding: 20px;                   /* Leaving space around content */
+}
+
+h1, h2 {
+    color: #333;                     /* Dark headings for added clarity */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;       /* Removing double borders */
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #eee;          /* Light grey header */
+}
+
+form input, form select, form textarea {
+    margin: 5px 0;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;          /* Preventing overflow on page */
+}
+
+form button {
+    padding: 8px 12px;
+    margin-top: 10px;
+    cursor: pointer;                 /* Show user a clickable button */
+}
