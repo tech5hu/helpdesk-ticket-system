@@ -142,4 +142,49 @@ def view_ticket_details(tickets):
     return found_ticket
     # SDE - return allows reusing this function for multiple workflows
     # CS - avoids unnecessary global variable manipulation
+
+# DELETE TICKET
+def delete_ticket(tickets):
+    """Delete a ticket by ID after confirmation"""
     
+    # 1. Ask for Ticket ID
+    ticket_id = input("Enter the Ticket ID to delete: ").strip()
+    # SDE - input stored in variable, keeps logic clean
+    # CS - .strip() prevents accidental spaces or injection
+
+    # 2. Validate ID is numeric
+    if not ticket_id.isdigit():
+        print("Invalid Ticket ID. Must be numeric.")
+        return
+    # SDE - early exit for invalid inputs
+    # CS - prevents errors from bad inputs
+
+    # 3. Look for ticket in datastore
+    found_ticket = tickets.get(ticket_id)
+    if not found_ticket:
+        print("Ticket not found. Please try again.")
+        return
+    # SDE - safe lookup using dictionary
+    # CS - avoids showing wrong or sensitive info
+
+    # AI enhancement - warn if high severity
+    if found_ticket['Severity'].lower() == "high":
+        print(" Warning: This is a HIGH severity ticket. Be careful before deleting!")
+
+    # 4. Confirm deletion with user
+    confirm = input(f"Are you sure you want to delete ticket '{found_ticket['Title']}'? (yes/no): ").strip().lower()
+    if confirm != "yes":
+        print("Deletion cancelled.")
+        return
+    # SDE - confirmation prevents accidental deletion
+    # CS - prevents data loss from wrong inputs
+
+    # 5. Delete ticket and save
+    del tickets[ticket_id]  # remove from dict
+    save_tickets(tickets)   # write updated data back to CSV
+    print(f"Ticket {ticket_id} deleted successfully.")
+    # SDE - separates deletion from saving
+    # CS - ensures persistent deletion is safe and controlled
+
+    # return deleted ticket for logging 
+    return found_ticket
