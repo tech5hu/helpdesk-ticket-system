@@ -8,7 +8,6 @@
 <body>
     <h1>Ticket Details</h1>
 
-    {% for ticket in tickets %}
     <div class="ticket-card">
         <p><strong>ID:</strong> {{ ticket['ID'] }}</p>
         <p><strong>Title:</strong> {{ ticket['Title'] }}</p>
@@ -27,7 +26,6 @@
         <p><strong>Category:</strong> {{ ticket['Category'] }}</p>
         <p><strong>Submitted:</strong> {{ ticket['Submission Date'] }} {{ ticket['Submission Time'] }}</p>
     </div>
-    {% endfor %}
 
     <a href="/" class="btn">Back to Tickets</a>
 </body>

@@ -1,22 +1,32 @@
 # Import the Flask web framework and helper functions
 from flask import Flask, render_template, request  # render_template displays HTML pages, request gets the form input
 from helpdesk import tickets, save_tickets  # existing helpdesk ticket data and the save function
+from operator import itemgetter  # for sorting dicts by key
 
 # Creating a new web app
-app = Flask(__name__)  # Telling Flask where to look for files
+app = Flask(__name__)
 
-# Home page route - shows all tickets
-@app.route("/")  # when the user goes to http://localhost:5000/
-def index():
-    # Display all tickets on the homepage
-    # tickets.values() gives all the tickets as a list
+# Home page - shows dashboard with stats and recent tickets
+@app.route("/")
+def home():
+    # Sort tickets by Submission Date descending (latest first)
+    recent_tickets = sorted(
+        tickets.values(), 
+        key=itemgetter('Submission Date', 'Submission Time'),  # sort by date+time
+        reverse=True
+    )[:5]  # show last 5 tickets
+    return render_template("home.html", tickets=tickets.values(), recent_tickets=recent_tickets)
+
+# All tickets page
+@app.route("/tickets")
+def all_tickets():
     return render_template("index.html", tickets=tickets.values())
 
-# Page to add a new ticket
-@app.route("/add", methods=["GET", "POST"])  # allows showing user the form and submitting it
+# Add a new ticket
+@app.route("/add", methods=["GET", "POST"])
 def add_ticket_web():
-    if request.method == "POST":  # if user has submitted the form
-        # Get the data the user typed into the form
+    if request.method == "POST":
+        # Get form data
         title = request.form["title"]
         description = request.form["description"]
         assignee = request.form["assignee"]
@@ -26,7 +36,7 @@ def add_ticket_web():
         # Automatically assign a new unique ticket ID
         ticket_id = str(max(map(int, tickets.keys()), default=100) + 1)
 
-        # Create a new ticket in memory
+        # Create a new ticket
         tickets[ticket_id] = {
             "ID": ticket_id,
             "Title": title,
@@ -34,70 +44,63 @@ def add_ticket_web():
             "Assignee": assignee,
             "Severity": severity,
             "Status": status,
-            "Category": "Software",  
-            "Submission Date": "25/02/2026",  
-            "Submission Time": "19:30:10"  
+            "Category": "Software",
+            "Submission Date": "25/02/2026",  # update dynamically if needed
+            "Submission Time": "19:30:10"
         }
 
-        # Saving the ticket to the CSV file so it isn't lost
         save_tickets(tickets)
-
-        # Letting user know the ticket was added successfully
         return "Ticket added!"
 
-    # If user just opens the page, show the form
     return render_template("add.html")
 
-# Page to view all tickets in detail
+# View a ticket in detail
 @app.route("/view/<ticket_id>")
 def view_ticket_web(ticket_id):
-    ticket = tickets.get(ticket_id)  # get ticket by ID
+    ticket = tickets.get(ticket_id)
     if not ticket:
         return f"Ticket {ticket_id} not found."
     return render_template("view.html", ticket=ticket)
 
-# Page to update an existing ticket
+# Update an existing ticket
 @app.route("/update/<ticket_id>", methods=["GET", "POST"])
 def update_ticket_web(ticket_id):
-    ticket = tickets.get(ticket_id)  # get ticket by ID
-    if not ticket:  # if ticket doesn't exist
+    ticket = tickets.get(ticket_id)
+    if not ticket:
         return f"Ticket {ticket_id} not found."
 
-    if request.method == "POST":  # if form submitted
-        # Update ticket info from form data
-        ticket["Title"] = request.form["title"]
-        ticket["Description"] = request.form["description"]
-        ticket["Assignee"] = request.form["assignee"]
-        ticket["Severity"] = request.form["severity"]
-        ticket["Status"] = request.form["status"]
-        ticket["Category"] = request.form["category"]
-
-        # Save updated tickets
+    if request.method == "POST":
+        ticket.update({
+            "Title": request.form["title"],
+            "Description": request.form["description"],
+            "Assignee": request.form["assignee"],
+            "Severity": request.form["severity"],
+            "Status": request.form["status"],
+            "Category": request.form["category"]
+        })
         save_tickets(tickets)
         return f"Ticket {ticket_id} updated successfully!"
 
-    # Show form pre filled with current ticket data
     return render_template("update.html", ticket=ticket)
 
-# Page to delete a ticket
+# Delete a ticket
 @app.route("/delete/<ticket_id>", methods=["GET", "POST"])
 def delete_ticket_web(ticket_id):
-    ticket = tickets.get(ticket_id)  # get ticket by ID
-    if not ticket:  # if ticket doesn't exist
+    ticket = tickets.get(ticket_id)
+    if not ticket:
         return f"Ticket {ticket_id} not found."
 
-    if request.method == "POST":  # if form submitted
-        confirm = request.form.get("confirm")  # check confirmation
+    if request.method == "POST":
+        confirm = request.form.get("confirm")
         if confirm == "yes":
-            tickets.pop(ticket_id)  # remove ticket
-            save_tickets(tickets)  # save changes
+            tickets.pop(ticket_id)
+            save_tickets(tickets)
             return f"Ticket {ticket_id} deleted successfully!"
-        else:
-            return "Deletion cancelled."
+        return "Deletion cancelled."
 
-    # Show confirmation page before deleting
     return render_template("delete.html", ticket=ticket)
 
-# Run the app if this file is executed directly
+# Run the app
 if __name__ == "__main__":
-    app.run(debug=True)  # debug=True shows errors while developing
+    print("Starting Flask app at http://127.0.0.1:5050")
+    app.run(debug=True, port=5050)
