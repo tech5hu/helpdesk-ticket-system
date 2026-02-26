@@ -1,15 +1,15 @@
-ID,Title,Description,Assignee,Severity,Status,Category,Submission Date,Submission Time
-100,Broken Printer,Printer not printing. Please assist.,Olivia Davis,Medium,In Progress,Hardware,01/03/2023,09:23:12
-101,Cannot Sign Into Email,Unable to sign into email account.,Ryan Collins,High,Closed,Software,04/03/2023,14:45:58
-102,Password Reset Request,User forgot password and requires reset.,Jacob Nguyen,Low,Open,Security,07/03/2023,17:12:21
-103,Cannot Connect to VPN,User experiencing issues connecting to VPN.,Benjamin Jackson,Medium,In Progress,Network,10/03/2023,10:30:41
-104,File Access Permissions Lost,User unable to access files due to permission issue.,Ryan Collins,Medium,In Progress,Software,15/03/2023,21:05:33
-105,Applications Crashing,Applications repeatedly crashing during use.,Ryan Collins,Low,Open,Software,20/03/2023,13:15:49
-106,Cannot Connect to WiFi,Device unable to connect to wireless network.,Benjamin Jackson,Medium,In Progress,Network,23/03/2023,08:47:26
-107,Microphone Not Working,Microphone not functioning during video calls.,Olivia Davis,Low,Open,Hardware,25/03/2023,16:22:07
-108,Camera Not Turning On,Camera not activating during video meetings.,Olivia Davis,Low,Open,Hardware,28/03/2023,11:55:14
-109,Suspicious Email Report,User received suspicious email requiring investigation.,Jacob Nguyen,High,Closed,Security,29/03/2023,19:40:39
-110,Account Locked Out,User account locked after multiple login attempts.,Jacob Nguyen,High,Closed,Security,31/03/2023,12:33:05
-111,Cannot Reset Password,Password reset page stuck on loading screen.,Ryan Collins,Medium,Open,Security,22/02/2026,04:44:24
-123,Login Issue,User unable to login to internal system.,Jacob Nguyen,Medium,Open,Security,22/02/2026,09:15:10
-124,Keyboard faulty,Cannot type the letter 'M' on my keyboard. Please help,Olivia Davis,Low,In Progress,Software,25/02/2026,19:30:10
+ID,Title,Description,Assignee,Severity,Status,Category,Submission Date,Submission Time,Comments
+100,Broken Printer,Printer not printing. Please assist.,Olivia Davis,Medium,In Progress,Hardware,01/03/2023,09:23:12,
+101,Cannot Sign Into Email,Unable to sign into email account.,Ryan Collins,High,Closed,Software,04/03/2023,14:45:58,
+102,Password Reset Request,User forgot password and requires reset.,Jacob Nguyen,Low,Open,Security,07/03/2023,17:12:21,
+103,Cannot Connect to VPN,User experiencing issues connecting to VPN.,Benjamin Jackson,Medium,In Progress,Network,10/03/2023,10:30:41,
+104,File Access Permissions Lost,User unable to access files due to permission issue.,Ryan Collins,Medium,In Progress,Software,15/03/2023,21:05:33,
+105,Applications Crashing,Applications repeatedly crashing during use.,Ryan Collins,Low,Open,Software,20/03/2023,13:15:49,
+106,Cannot Connect to WiFi,Device unable to connect to wireless network.,Benjamin Jackson,Medium,In Progress,Network,23/03/2023,08:47:26,
+107,Microphone Not Working,Microphone not functioning during video calls.,Olivia Davis,Low,Open,Hardware,25/03/2023,16:22:07,
+108,Camera Not Turning On,Camera not activating during video meetings.,Olivia Davis,Low,Open,Hardware,28/03/2023,11:55:14,
+109,Suspicious Email Report,User received suspicious email requiring investigation.,Jacob Nguyen,High,Closed,Security,29/03/2023,19:40:39,
+110,Account Locked Out,User account locked after multiple login attempts.,Jacob Nguyen,High,Closed,Security,31/03/2023,12:33:05,
+111,Cannot Reset Password,Password reset page stuck on loading screen.,Ryan Collins,Medium,Open,Security,22/02/2026,04:44:24,
+123,Login Issue,User unable to login to internal system.,Jacob Nguyen,Medium,Open,Security,22/02/2026,09:15:10,
+124,Keyboard faulty,Cannot type the letter 'M' on my keyboard. Please help,Olivia Davis,Low,In Progress,Software,25/02/2026,19:30:10,
