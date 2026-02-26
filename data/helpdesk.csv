@@ -12,4 +12,4 @@ ID,Title,Description,Assignee,Severity,Status,Category,Submission Date,Submissio
 110,Account Locked Out,User account locked after multiple login attempts.,Jacob Nguyen,High,Closed,Security,31/03/2023,12:33:05
 111,Cannot Reset Password,Password reset page stuck on loading screen.,Ryan Collins,Medium,Open,Security,22/02/2026,04:44:24
 123,Login Issue,User unable to login to internal system.,Jacob Nguyen,Medium,Open,Security,22/02/2026,09:15:10
-124,Keyboard faulty,Cannot type the letter 'M' on my keyboard. Please help,Olivia,Low,In Progress,Software,25/02/2026,19:30:10
+124,Keyboard faulty,Cannot type the letter 'M' on my keyboard. Please help,Olivia Davis,Low,In Progress,Software,25/02/2026,19:30:10

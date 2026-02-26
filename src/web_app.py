@@ -11,16 +11,26 @@ app = Flask(__name__)
 def home():
     # Sort tickets by Submission Date descending (latest first)
     recent_tickets = sorted(
-        tickets.values(), 
+        tickets.values(),
         key=itemgetter('Submission Date', 'Submission Time'),  # sort by date+time
         reverse=True
     )[:5]  # show last 5 tickets
     return render_template("home.html", tickets=tickets.values(), recent_tickets=recent_tickets)
 
-# All tickets page
+# All tickets page with optional filtering
 @app.route("/tickets")
 def all_tickets():
-    return render_template("index.html", tickets=tickets.values())
+    filter_type = request.args.get("filter")  # read ?filter=Open or ?filter=High
+    tickets_list = list(tickets.values())
+
+    # Apply filter if needed
+    if filter_type == "Open":
+        tickets_list = [t for t in tickets_list if t["Status"] == "Open"]
+    elif filter_type == "High":
+        tickets_list = [t for t in tickets_list if t["Severity"] == "High"]
+
+    # Always send full tickets for the stats cards
+    return render_template("index.html", tickets=tickets_list, filter_type=filter_type, all_tickets=tickets.values())
 
 # Add a new ticket
 @app.route("/add", methods=["GET", "POST"])

@@ -4,12 +4,39 @@
     <meta charset="UTF-8">
     <title>Helpdesk Tickets</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Active filter highlight */
+        .filter-active {
+            border: 2px solid #007BFF;
+            box-shadow: 0 6px 18px rgba(0, 123, 255, 0.15);
+        }
+    </style>
 </head>
 <body>
-    <h1>All Tickets</h1>
+    <h1>All Tickets {% if filter_type %}- {{ filter_type }}{% endif %}</h1>
 
-    <a href="/add" class="btn">Add New Ticket</a>
+    <!-- Stats Cards -->
+    <section class="stats-section">
+        <a href="{{ url_for('all_tickets') }}" class="stat-card {% if not filter_type %}filter-active{% endif %}">
+            <h2>Total Tickets</h2>
+            <p class="stat-number">{{ all_tickets|length }}</p>
+        </a>
+        <a href="{{ url_for('all_tickets', filter='Open') }}" class="stat-card {% if filter_type=='Open' %}filter-active{% endif %}">
+            <h2>Open Tickets</h2>
+            <p class="stat-number">{{ all_tickets|selectattr('Status', 'equalto', 'Open')|list|length }}</p>
+        </a>
+        <a href="{{ url_for('all_tickets', filter='High') }}" class="stat-card {% if filter_type=='High' %}filter-active{% endif %}">
+            <h2>High Severity</h2>
+            <p class="stat-number">{{ all_tickets|selectattr('Severity', 'equalto', 'High')|list|length }}</p>
+        </a>
+    </section>
 
+    <!-- Actions -->
+    <section class="actions-section">
+        <a href="{{ url_for('add_ticket_web') }}" class="btn">Add New Ticket</a>
+    </section>
+
+    <!-- Tickets Table -->
     <table>
         <thead>
             <tr>
@@ -40,10 +67,14 @@
                 <td>{{ ticket['Status'] }}</td>
                 <td>{{ ticket['Category'] }}</td>
                 <td>
-                    <a href="/view/{{ ticket['ID'] }}" class="btn">View</a>
-                    <a href="/update/{{ ticket['ID'] }}" class="btn">Update</a>
-                    <a href="/delete/{{ ticket['ID'] }}" class="btn">Delete</a>
+                    <a href="{{ url_for('view_ticket_web', ticket_id=ticket['ID']) }}" class="btn">View</a>
+                    <a href="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}" class="btn">Update</a>
+                    <a href="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}" class="btn">Delete</a>
                 </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align:center;">No tickets found for this filter.</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -12,21 +12,21 @@
         <p class="dashboard-welcome">Welcome to your ticket management system</p>
     </header>
 
-    <!-- Stats Cards -->
+    <!-- Stats cards (clickable tabs) -->
     <section class="stats-section">
-        <div class="stat-card">
-            <h2>Total Tickets</h2>
-            <p class="stat-number">{{ tickets|length }}</p>
-        </div>
-        <div class="stat-card">
-            <h2>Open Tickets</h2>
-            <p class="stat-number">{{ tickets|selectattr('Status', 'equalto', 'Open')|list|length }}</p>
-        </div>
-        <div class="stat-card">
-            <h2>High Severity</h2>
-            <p class="stat-number">{{ tickets|selectattr('Severity', 'equalto', 'High')|list|length }}</p>
-        </div>
-    </section>
+    <a href="{{ url_for('all_tickets') }}" class="stat-card">
+        <h2>Total Tickets</h2>
+        <p class="stat-number">{{ tickets|length }}</p>
+    </a>
+    <a href="{{ url_for('all_tickets', filter='Open') }}" class="stat-card">
+        <h2>Open Tickets</h2>
+        <p class="stat-number">{{ tickets|selectattr('Status', 'equalto', 'Open')|list|length }}</p>
+    </a>
+    <a href="{{ url_for('all_tickets', filter='High') }}" class="stat-card">
+        <h2>High Severity</h2>
+        <p class="stat-number">{{ tickets|selectattr('Severity', 'equalto', 'High')|list|length }}</p>
+    </a>
+</section>
 
     <!-- Actions -->
     <section class="actions-section">
