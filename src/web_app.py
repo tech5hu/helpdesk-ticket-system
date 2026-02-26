@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request  # render_template displays HTML pages, request gets the form input
 from helpdesk import tickets, save_tickets  # existing helpdesk ticket data and the save function
 from operator import itemgetter  # for sorting dicts by key
+from datetime import datetime # SDE - enables recording dates and times for tickets and logs
 
 # Creating a new web app
 app = Flask(__name__)
@@ -109,6 +110,50 @@ def delete_ticket_web(ticket_id):
         return "Deletion cancelled."
 
     return render_template("delete.html", ticket=ticket)
+
+# Add a comment to a ticket
+@app.route("/comment/<ticket_id>", methods=["GET", "POST"])
+def comment_ticket_web(ticket_id):
+    ticket = tickets.get(ticket_id)
+    if not ticket:
+        return f"Ticket {ticket_id} not found."
+
+    if request.method == "POST":
+        comment = request.form["comment"].strip()
+        if comment:
+            # SDE - store comments as a list for maintainability
+            ticket.setdefault("Comments", [])
+            ticket["Comments"].append(f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}: {comment}")
+            save_tickets(tickets)  # SDE - save changes to disk
+            return f"Comment added to ticket {ticket_id}!"
+
+    return render_template("comment.html", ticket=ticket)
+
+# Close a ticket
+@app.route("/close/<ticket_id>", methods=["POST"])
+def close_ticket_web(ticket_id):
+    ticket = tickets.get(ticket_id)
+    if not ticket:
+        return f"Ticket {ticket_id} not found."
+    ticket["Status"] = "Closed"
+    save_tickets(tickets)  # CS - ensures ticket status is securely updated
+    return f"Ticket {ticket_id} closed successfully!"
+
+# Escalate a ticket (change assignee and optionally severity)
+@app.route("/escalate/<ticket_id>", methods=["GET", "POST"])
+def escalate_ticket_web(ticket_id):
+    ticket = tickets.get(ticket_id)
+    if not ticket:
+        return f"Ticket {ticket_id} not found."
+
+    if request.method == "POST":
+        new_assignee = request.form["assignee"].strip()
+        ticket["Assignee"] = new_assignee
+        ticket["Severity"] = "High"  # AI suggestion: escalate sets severity high
+        save_tickets(tickets)  # CS - secure update, logged automatically
+        return f"Ticket {ticket_id} escalated to {new_assignee}!"
+
+    return render_template("escalate.html", ticket=ticket)
 
 # Run the app
 if __name__ == "__main__":

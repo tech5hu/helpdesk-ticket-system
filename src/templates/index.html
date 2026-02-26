@@ -70,6 +70,13 @@
                     <a href="{{ url_for('view_ticket_web', ticket_id=ticket['ID']) }}" class="btn">View</a>
                     <a href="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}" class="btn">Update</a>
                     <a href="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}" class="btn">Delete</a>
+                    <a href="{{ url_for('comment_ticket_web', ticket_id=ticket['ID']) }}" class="btn">Comment</a>
+                    {% if ticket['Status'].lower() != 'closed' %}
+                        <form action="{{ url_for('close_ticket_web', ticket_id=ticket['ID']) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn">Close</button>
+                        </form>
+                        <a href="{{ url_for('escalate_ticket_web', ticket_id=ticket['ID']) }}" class="btn">Escalate</a>
+                    {% endif %}
                 </td>
             </tr>
             {% else %}
