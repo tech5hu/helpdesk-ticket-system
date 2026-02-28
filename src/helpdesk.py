@@ -1,6 +1,7 @@
 import csv  # SDE - allows reading and writing ticket data in a structured way
 from pathlib import Path  # SDE - safely handles file paths on any system
 from datetime import datetime  # SDE - enables recording dates and times for tickets and logs
+import json
 
 # SDE - define where ticket data and logs are stored
 DATA_FILE = Path(__file__).parent.parent / "data" / "helpdesk.csv"
@@ -46,7 +47,11 @@ def load_tickets():
                 continue
 
             # AI - load comments as a list for future automated handling
-            row["Comments"] = row.get("Comments", "").split(";") if row.get("Comments") else []
+            try:
+                row["Comments"] = json.loads(row.get("Comments", "[]"))
+            except json.JSONDecodeError:
+                row["Comments"] = []
+
 
             tickets[ticket_id] = row  # SDE - save the ticket using its ID
 
@@ -73,7 +78,7 @@ def save_tickets(tickets):
         writer.writeheader()  # SDE - write the column titles first
         for ticket in tickets.values():
             ticket_copy = ticket.copy()
-            ticket_copy["Comments"] = ";".join(ticket_copy.get("Comments", []))  # AI - store comments as a string for later use
+            ticket_copy["Comments"] = json.dumps(ticket_copy.get("Comments", []))
             writer.writerow(ticket_copy)
             # CS - ensures the file stays consistent and readable
             # AI - clean data helps future automated processing
@@ -257,42 +262,39 @@ def update_ticket(tickets):
 def add_comment(tickets):
     """Add a comment to a ticket"""
 
-    ticket_id = input("Enter Ticket ID to comment on: ").strip()  
-    # CS - removes extra spaces to avoid input mistakes
+    ticket_id = input("Enter Ticket ID to comment on: ").strip()
 
     if not ticket_id.isdigit():
-        print("Invalid Ticket ID.")  
-        # CS - ensures only numbers are accepted
+        print("Invalid Ticket ID.")
         return
 
-    ticket = tickets.get(ticket_id)  
-    # SDE - quickly finds the correct ticket using its ID
+    ticket = tickets.get(ticket_id)
     if not ticket:
-        print("Ticket not found.")  
-        # CS - prevents access to tickets that do not exist
+        print("Ticket not found.")
         return
 
-    comment = input("Enter your comment: ").strip()
-    # CS - removes accidental spaces from the comment
-
-    if not comment:
-        print("Comment cannot be empty.")  
-        # CS - stops empty comments from being saved
+    comment_text = input("Enter your comment: ").strip()
+    if not comment_text:
+        print("Comment cannot be empty.")
         return
 
     # AI - checks for sensitive words to help protect important information
-    if any(word in comment.lower() for word in ["password", "confidential", "breach"]):
+    if any(word in comment_text.lower() for word in ["password", "confidential", "breach"]):
         print("AI Warning: Comment may contain sensitive information.")
 
-    ticket.setdefault("Comments", []).append(comment)  
-    # SDE - ensures a comment list exists before adding to it
-    # SDE - keeps all previous comments saved for record keeping
+    # store comment as a dict (like in web version)
+    comment_dict = {
+        "Author": "CLI User",
+        "Date": datetime.now().strftime("%d/%m/%Y"),
+        "Time": datetime.now().strftime("%H:%M:%S"),
+        "Content": comment_text
+    }
 
-    save_tickets(tickets)  
-    # SDE - saves changes so no data is lost
+    ticket.setdefault("Comments", []).append(comment_dict)  # append dict, not string
 
+    save_tickets(tickets)  # save changes
     print("Comment added successfully.")
-
+    
 def close_ticket(tickets):
     """Close a ticket safely"""
 

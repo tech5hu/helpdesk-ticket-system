@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Helpdesk Tickets</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Button colors matching View Ticket page */
+        .btn { min-width: 80px; margin-right: 8px; padding: 6px 12px; border: none; border-radius: 4px; color: #fff; cursor: pointer; font-size: 0.9rem; }
+        .btn-view { background-color: #1976d2; }       /* Blue */
+        .btn-update { background-color: #0d47a1; }     /* Dark Blue */
+        .btn-escalate { background-color: #e53935; }   /* Red */
+        .btn-close { background-color: #fb8c00; }      /* Orange */
+        .btn-delete { background-color: #b71c1c; }     /* Dark Red */
+        .btn:hover { opacity: 0.9; }
+        .ticket-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+        .ticket-actions .btn:last-child { margin-right: 0; }
+    </style>
+</head>
+<body>
+
+<div class="page-outer">
+<div class="page-wrapper">
+    <a href="{{ url_for('home') }}" class="home-btn">← Back To Home Page</a>
+
+    <header class="dashboard-header">
+        <h1>All Tickets{% if filter_type %} - {{ filter_type }}{% endif %}</h1>
+        <p class="dashboard-welcome">Manage, filter and review all helpdesk tickets</p>
+    </header>
+
+    <section class="stats-section">
+        <a href="{{ url_for('all_tickets') }}" class="stat-card {% if not filter_type %}filter-active{% endif %}">
+            <h2>Total Tickets</h2>
+            <p class="stat-number">{{ all_tickets|length }}</p>
+        </a>
+        <a href="{{ url_for('all_tickets', filter='Open') }}" class="stat-card {% if filter_type=='Open' %}filter-active{% endif %}">
+            <h2>Open Tickets</h2>
+            <p class="stat-number">{{ all_tickets|selectattr('Status','equalto','Open')|list|length }}</p>
+        </a>
+        <a href="{{ url_for('all_tickets', filter='High') }}" class="stat-card {% if filter_type=='High' %}filter-active{% endif %}">
+            <h2>High Severity</h2>
+            <p class="stat-number">{{ all_tickets|selectattr('Severity','equalto','High')|list|length }}</p>
+        </a>
+    </section>
+
+    <section class="actions-section">
+        <a href="{{ url_for('add_ticket_web') }}" class="btn btn-update">Add New Ticket</a>
+    </section>
+
+    <!-- Recent Ticket Cards -->
+    <section class="recent-tickets">
+        <h2>Recent Tickets</h2>
+        <div class="recent-tickets-container">
+            {% for ticket in recent_tickets %}
+            <div class="ticket-card" data-severity="{{ ticket['Severity']|lower }}">
+                <div class="ticket-header">
+                    <strong>{{ ticket['Title'] }}</strong>
+                    <span class="badge-{{ ticket['Severity']|lower }}">{{ ticket['Severity'] }}</span>
+                </div>
+                <div class="ticket-info">
+                    <p>ID: {{ ticket['ID'] }} | Assignee: {{ ticket['Assignee'] }} | Status: {{ ticket['Status'] }}</p>
+                    <p>Category: {{ ticket['Category'] }}</p>
+                </div>
+                <div class="ticket-actions">
+                    <button class="btn btn-view" onclick="window.location='{{ url_for('view_ticket_web', ticket_id=ticket['ID']) }}'">View</button>
+                    {% if ticket['Status'].lower() != 'closed' %}
+                    <button class="btn btn-close"
+                        onclick="openConfirmModal('Close Ticket','Are you sure you want to close ticket {{ ticket['ID'] }}?','{{ url_for('close_ticket_web', ticket_id=ticket['ID']) }}')">Close</button>
+                    <button class="btn btn-escalate"
+                        onclick="openEscalateModal('{{ ticket['ID'] }}','{{ ticket['Title'] }}')">Escalate</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Tickets Table -->
+    <section>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Title</th><th>Assignee</th><th>Severity</th><th>Status</th><th>Category</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket['ID'] }}</td>
+                    <td>{{ ticket['Title'] }}</td>
+                    <td>{{ ticket['Assignee'] }}</td>
+                    <td>
+                        {% if ticket['Severity'].lower() == 'low' %}
+                            <span class="badge-low">Low</span>
+                        {% elif ticket['Severity'].lower() == 'medium' %}
+                            <span class="badge-medium">Medium</span>
+                        {% else %}
+                            <span class="badge-high">High</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ ticket['Status'] }}</td>
+                    <td>{{ ticket['Category'] }}</td>
+                    <td class="ticket-actions">
+                        <button class="btn btn-view" onclick="window.location='{{ url_for('view_ticket_web', ticket_id=ticket['ID']) }}'">View</button>
+                        {% if ticket['Status'].lower() != 'closed' %}
+                        <button class="btn btn-close"
+                            onclick="openConfirmModal('Close Ticket','Are you sure you want to close ticket {{ ticket['ID'] }}?','{{ url_for('close_ticket_web', ticket_id=ticket['ID']) }}')">Close</button>
+                        <button class="btn btn-escalate"
+                            onclick="openEscalateModal('{{ ticket['ID'] }}','{{ ticket['Title'] }}')">Escalate</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+</div>
+</div>
+
+<!-- Generic Confirm Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="confirmModal.style.display='none'">&times;</span>
+    <h3 id="modalTitle">Confirm Action</h3>
+    <p id="modalMessage">Are you sure?</p>
+    <div class="modal-buttons">
+      <form id="modalForm" method="post">
+        <button type="submit" class="btn btn-close">Yes</button>
+        <button type="button" class="btn btn-view" id="cancelModal">Cancel</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Escalate Modal -->
+<div id="escalateModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeEscalate">&times;</span>
+    <h2 id="escalateTitle">Escalate Ticket</h2>
+    <form id="escalateForm" method="POST">
+      <div class="form-group">
+        <label>Assign to:</label>
+        <select name="assignee" required id="escalateAssignee">
+          {% for user in assignees %}
+            <option value="{{ user }}">{{ user }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-actions" style="text-align:center; margin-top:12px;">
+        <button type="submit" class="btn btn-escalate">Escalate</button>
+        <button type="button" class="btn btn-close" id="cancelEscalateBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openConfirmModal(title,message,action){
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMessage').textContent = message;
+    document.getElementById('modalForm').action = action;
+    document.getElementById('confirmModal').style.display='flex';
+}
+document.getElementById('cancelModal').onclick=function(){ document.getElementById('confirmModal').style.display='none'; }
+document.getElementById('closeEscalate').onclick=function(){ document.getElementById('escalateModal').style.display='none'; }
+document.getElementById('cancelEscalateBtn').onclick=function(){ document.getElementById('escalateModal').style.display='none'; }
+
+function openEscalateModal(id,title){
+    document.getElementById('escalateTitle').textContent = `Escalate Ticket #${id} - ${title}`;
+    document.getElementById('escalateForm').action = `/escalate/${id}`;
+    document.getElementById('escalateModal').style.display='flex';
+}
+
+// Close modals when clicking outside
+window.onclick = function(event){
+    if(event.target==document.getElementById('confirmModal')) document.getElementById('confirmModal').style.display='none';
+    if(event.target==document.getElementById('escalateModal')) document.getElementById('escalateModal').style.display='none';
+}
+</script>
+
+</body>
+</html>

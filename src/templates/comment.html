@@ -1,5 +1,28 @@
-<h2>Comment on Ticket {{ ticket['ID'] }} - {{ ticket['Title'] }}</h2>
-<form method="post">
-    <textarea name="comment" placeholder="Enter your comment"></textarea><br>
-    <button type="submit">Add Comment</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Comment on Ticket {{ ticket['ID'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- COMMENT FORM FOR TICKET -->
+    <div class="form-card">
+        <!-- Header with ticket info -->
+        <h2>Comment on Ticket {{ ticket['ID'] }} - {{ ticket['Title'] }}</h2>
+
+        <!-- Comment form -->
+        <form method="post" style="text-align: center;">
+            <!-- Text area for comment input -->
+            <textarea name="comment" placeholder="Enter your comment"></textarea>
+            <!-- Submit button (centered) -->
+            <button type="submit" class="btn add-comment-btn">Add Comment</button>
+        </form>
+    </div>
+
+    <!-- Back button outside the form card -->
+    <div class="back-btn-container">
+        <a href="{{ back_url or request.referrer or url_for('all_tickets') }}" class="btn back-btn">Back</a>
+    </div>
+</body>
+</html>

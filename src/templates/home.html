@@ -6,77 +6,64 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- Header -->
-    <header class="dashboard-header">
-        <h1>Helpdesk Dashboard</h1>
-        <p class="dashboard-welcome">Welcome to your ticket management system</p>
-    </header>
+    <div class="page-outer">
+        <div class="page-wrapper">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1>Helpdesk Dashboard</h1>
+                <p class="dashboard-welcome">Welcome to Your Ticket Management System</p>
+            </header>
 
-    <!-- Stats cards (clickable tabs) -->
-    <section class="stats-section">
-    <a href="{{ url_for('all_tickets') }}" class="stat-card">
-        <h2>Total Tickets</h2>
-        <p class="stat-number">{{ tickets|length }}</p>
-    </a>
-    <a href="{{ url_for('all_tickets', filter='Open') }}" class="stat-card">
-        <h2>Open Tickets</h2>
-        <p class="stat-number">{{ tickets|selectattr('Status', 'equalto', 'Open')|list|length }}</p>
-    </a>
-    <a href="{{ url_for('all_tickets', filter='High') }}" class="stat-card">
-        <h2>High Severity</h2>
-        <p class="stat-number">{{ tickets|selectattr('Severity', 'equalto', 'High')|list|length }}</p>
-    </a>
-</section>
+            <!-- Stats cards (clickable tabs) -->
+            <section class="stats-section">
+                <a href="{{ url_for('all_tickets') }}" class="stat-card">
+                    <h2>Total Tickets</h2>
+                    <p class="stat-number">{{ tickets|length }}</p>
+                </a>
+                <a href="{{ url_for('all_tickets', filter='Open') }}" class="stat-card">
+                    <h2>Open Tickets</h2>
+                    <p class="stat-number">{{ tickets|selectattr('Status', 'equalto', 'Open')|list|length }}</p>
+                </a>
+                <a href="{{ url_for('all_tickets', filter='High') }}" class="stat-card">
+                    <h2>High Severity</h2>
+                    <p class="stat-number">{{ tickets|selectattr('Severity', 'equalto', 'High')|list|length }}</p>
+                </a>
+            </section>
 
-    <!-- Actions -->
-    <section class="actions-section">
-        <a href="{{ url_for('add_ticket_web') }}" class="btn">Add New Ticket</a>
-        <a href="{{ url_for('all_tickets') }}" class="btn">View All Tickets</a>
-    </section>
+            <!-- Actions -->
+            <section class="actions-section">
+                <a href="{{ url_for('add_ticket_web') }}" class="btn">Add New Ticket</a>
+                <a href="{{ url_for('all_tickets') }}" class="btn">View All Tickets</a>
+            </section>
 
-    <!-- Recent Tickets -->
-    <section class="recent-tickets">
-        <h2>Recent Tickets</h2>
-        {% if recent_tickets %}
-            <table class="tickets-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Assignee</th>
-                        <th>Severity</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ticket in recent_tickets %}
-                        <tr>
-                            <td>{{ ticket['ID'] }}</td>
-                            <td>{{ ticket['Title'] }}</td>
-                            <td>{{ ticket['Assignee'] }}</td>
-                            <td>
-                                {% if ticket['Severity']|lower == 'low' %}
-                                    <span class="badge-low">Low</span>
-                                {% elif ticket['Severity']|lower == 'medium' %}
-                                    <span class="badge-medium">Medium</span>
-                                {% else %}
-                                    <span class="badge-high">High</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ ticket['Status'] }}</td>
-                            <td>
-                                <a href="{{ url_for('view_ticket_web', ticket_id=ticket['ID']) }}">View</a> |
-                                <a href="{{ url_for('update_ticket_web', ticket_id=ticket['ID']) }}">Update</a> |
-                                <a href="{{ url_for('delete_ticket_web', ticket_id=ticket['ID']) }}">Delete</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No tickets yet. Add your first ticket!</p>
-        {% endif %}
-    </section>
+            <!-- Recent Tickets Cards -->
+            <section class="recent-tickets">
+                <h2>Recent Tickets</h2>
+                <div class="recent-tickets-container">
+                    {% if recent_tickets %}
+                        {% for ticket in recent_tickets %}
+                        <div class="ticket-card" data-severity="{{ ticket['Severity']|lower }}">
+                            <div class="ticket-header">
+                                <strong>{{ ticket['Title'] }}</strong>
+                                <span class="badge-{{ ticket['Severity']|lower }}">{{ ticket['Severity'] }}</span>
+                            </div>
+                            <div class="ticket-info">
+                                <p><span class="field-label">ID:</span> {{ ticket['ID'] }}</p>
+                                <p><span class="field-label">Assignee:</span> {{ ticket['Assignee'] }}</p>
+                                <p><span class="field-label">Status:</span> {{ ticket['Status'] }}</p>
+                                <p><span class="field-label">Category:</span> {{ ticket['Category'] }}</p>
+                            </div>
+                            <div class="ticket-actions">
+                                <a href="{{ url_for('view_ticket_web', ticket_id=ticket['ID']) }}" class="btn action-btn">View</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align:center;">No tickets yet. Add your first ticket!</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
 </body>
 </html>

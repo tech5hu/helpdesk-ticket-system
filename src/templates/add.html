@@ -6,35 +6,101 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Add New Ticket</h1>
 
-    <form method="POST">
-        <label>Title:</label>
-        <input type="text" name="title" required>
+<div class="page-outer">
+    <div class="page-wrapper">
+        <a href="{{ url_for('home') }}" class="home-btn">← Back To Home Page</a>
 
-        <label>Description:</label>
-        <textarea name="description" required></textarea>
 
-        <label>Assignee:</label>
-        <input type="text" name="assignee" required>
+        <header class="dashboard-header">
+            <h1>Add New Ticket</h1>
+            <p class="dashboard-welcome">
+                Fill out the form to create a new ticket
+            </p>
+        </header>
 
-        <label>Severity:</label>
-        <select name="severity" required>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-        </select>
+        <form id="addTicketForm" method="POST" class="ticket-form">
 
-        <label>Status:</label>
-        <select name="status" required>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Closed">Closed</option>
-        </select>
+            <label for="title">Title</label>
+            <input id="title" type="text" name="title" required>
 
-        <button type="submit" class="btn">Add Ticket</button>
-    </form>
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
 
-    <a href="/" class="btn">Back to Tickets</a>
+            <label for="assignee">Assignee</label>
+            <select id="assignee" name="assignee" required>
+                {% for user in assignees %}
+                    <option value="{{ user }}">{{ user }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="severity">Severity</label>
+            <select id="severity" name="severity" required>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+                <option value="Open">Open</option>
+                <option value="In-progress">In Progress</option>
+                <option value="Closed">Closed</option>
+            </select>
+
+            <button type="submit" class="btn">
+                Add Ticket
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="addTicketModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h3>Confirm Action</h3>
+        <p>Are you sure you want to add this ticket?</p>
+
+        <div class="modal-buttons">
+            <button id="confirmAdd" class="btn confirm-btn">Yes</button>
+            <button id="cancelAdd" class="btn cancel-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const form = document.getElementById('addTicketForm');
+const modal = document.getElementById('addTicketModal');
+const confirmBtn = document.getElementById('confirmAdd');
+const cancelBtn = document.getElementById('cancelAdd');
+const closeBtn = document.getElementById('closeModal');
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    modal.style.display = 'block';
+});
+
+confirmBtn.addEventListener('click', function() {
+    form.submit();
+});
+
+cancelBtn.addEventListener('click', function() {
+    modal.style.display = 'none';
+});
+
+closeBtn.addEventListener('click', function() {
+    modal.style.display = 'none';
+});
+
+window.addEventListener('click', function(e) {
+    if (e.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+</script>
+
 </body>
 </html>

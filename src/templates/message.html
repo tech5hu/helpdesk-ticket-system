@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="message-card {% if card_class %}{{ card_class }}{% endif %}">
+        {% if icon %}
+        <div class="icon">{{ icon }}</div>
+        {% endif %}
+        <p>{{ message }}</p>
+        <a href="{{ back_url }}" class="btn">Back</a>
+    </div>
+</body>
+</html>
