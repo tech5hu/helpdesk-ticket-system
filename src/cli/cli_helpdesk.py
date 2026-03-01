@@ -6,8 +6,9 @@ import openai  # using OpenAI to suggest ticket categories and severity
 from dotenv import load_dotenv
 import ast
 
-# csv file path
-CSV_FILE = "../data/helpdesk.csv"
+# build absolute path to project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CSV_FILE = os.path.join(BASE_DIR, "data", "helpdesk.csv")
 
 # tickets dictionary (loaded from csv at startup)
 tickets = {}
