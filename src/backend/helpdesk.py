@@ -1,11 +1,15 @@
-import csv  # SDE - allows reading and writing ticket data in a structured way
+# SDE - allows reading and writing ticket data in a structured way
 from pathlib import Path  # SDE - safely handles file paths on any system
 from datetime import datetime  # SDE - enables recording dates and times for tickets and logs
 import json
+from json import JSONDecodeError
+import csv
 
 # SDE - define where ticket data and logs are stored
-DATA_FILE = Path(__file__).parent.parent / "data" / "helpdesk.csv"
-LOG_FILE = Path(__file__).parent.parent / "logs" / "error.log"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_FILE = BASE_DIR / "data" / "helpdesk.csv"
+LOG_FILE = BASE_DIR / "logs" / "error.log"
+print("DATA FILE PATH:", DATA_FILE)
 
 
 def load_tickets():
@@ -32,7 +36,7 @@ def load_tickets():
                 continue
 
             # SDE - check required fields exist
-            required_fields = ["Title", "Description", "Assignee", "Severity", "Status", "Category", "Submission Date", "Submission Time"]
+            required_fields = ["Title", "Description", "Assignee", "Severity", "Status", "Category", "Submission DateTime"]
             missing = [field for field in required_fields if not row.get(field)]
             if missing:
                 log_error(f"Ticket {ticket_id} missing fields: {missing} - row skipped")  # CS - skip incomplete tickets
@@ -49,7 +53,7 @@ def load_tickets():
             # AI - load comments as a list for future automated handling
             try:
                 row["Comments"] = json.loads(row.get("Comments", "[]"))
-            except json.JSONDecodeError:
+            except JSONDecodeError:
                 row["Comments"] = []
 
 
@@ -69,7 +73,7 @@ def log_error(message):
 
 def save_tickets(tickets):
     """Save all tickets back to the CSV file"""
-    fieldnames = ["ID", "Title", "Description", "Assignee", "Severity", "Status", "Category", "Submission Date", "Submission Time", "Comments"]
+    fieldnames = ["ID", "Title", "Description", "Assignee", "Severity", "Status", "Category", "Submission DateTime", "Comments"]
 
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)  # CS - ensure the data folder exists
 
@@ -123,8 +127,7 @@ def add_ticket():
 
     category = predict_category(title).title()  # AI - automatically suggest category
 
-    submission_date = datetime.now().strftime("%d/%m/%Y")  # SDE - record submission date
-    submission_time = datetime.now().strftime("%H:%M:%S")  # SDE - record submission time
+    submission_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     tickets[ticket_id] = {  # SDE - add ticket to memory
         "ID": ticket_id,
@@ -134,8 +137,7 @@ def add_ticket():
         "Severity": severity,
         "Status": status,
         "Category": category,
-        "Submission Date": submission_date,
-        "Submission Time": submission_time,
+        "Submission DateTime": submission_datetime,
         "Comments": []  # AI - start with empty comments list for later tracking
     }
 

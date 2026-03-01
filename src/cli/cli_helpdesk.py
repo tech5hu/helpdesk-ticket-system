@@ -1,7 +1,7 @@
 import os
 import csv
 from datetime import datetime
-from helpdesk import delete_ticket 
+from src.backend.helpdesk import delete_ticket 
 import openai  # using OpenAI to suggest ticket categories and severity
 
 # csv file path

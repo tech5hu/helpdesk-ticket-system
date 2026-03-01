@@ -1,5 +1,5 @@
 import unittest
-from helpdesk import tickets, add_ticket, update_ticket, delete_ticket, predict_category
+from src.backend.helpdesk import tickets, add_ticket, update_ticket, delete_ticket, predict_category
 
 class TestHelpdesk(unittest.TestCase):
     """Unit tests for core Helpdesk functions"""

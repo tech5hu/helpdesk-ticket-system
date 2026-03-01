@@ -1,10 +1,11 @@
 # Import the Flask web framework and helper functions
 from flask import Flask, render_template, request, url_for, redirect, flash  # render_template displays HTML pages, request gets the form input
-from helpdesk import tickets, save_tickets  # existing helpdesk ticket data and the save function
+from src.backend.helpdesk import tickets, save_tickets  # existing helpdesk ticket data and the save function
 from operator import itemgetter  # for sorting dicts by key
 from datetime import datetime # enables recording dates and times for tickets and logs
 import json
 import os
+import csv
 
 # Creating a new web app
 app = Flask(__name__)
