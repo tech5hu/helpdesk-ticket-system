@@ -4,4 +4,5 @@ __pycache__/
 .idea/
 logs/
 .env
-.DS_Storesrc/.zshrc
+.DS_Store
+src/.zshrc
