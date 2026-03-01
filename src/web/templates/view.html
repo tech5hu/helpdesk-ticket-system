@@ -10,10 +10,10 @@
 <div class="page-outer">
 <div class="page-wrapper">
 
-    <!-- Home Button -->
+    <!-- home button -->
     <a href="{{ url_for('home') }}" class="home-btn">← Back To Home Page</a>
 
-    <!-- Header -->
+    <!-- header -->
     <header class="dashboard-header">
         <h1>Ticket Details</h1>
         <p class="dashboard-welcome">Viewing Ticket #{{ ticket['ID'] }}</p>
@@ -53,7 +53,7 @@
     </div>
 
     {% if ticket['Status'].lower() != 'closed' %}
-    <!-- Professional Action Row -->
+    <!-- action row -->
     <div class="ticket-action-row">
     <button class="btn btn-update" id="updateBtn">Update</button>
     <button class="btn btn-escalate" id="escalateBtn">Escalate</button>
@@ -73,7 +73,7 @@
     {% endif %}
 </div>
 
-    <!-- Add Comment Card -->
+    <!-- add comment card -->
     <div class="add-comment-card">
         <form action="{{ url_for('comment_ticket_web', ticket_id=ticket['ID']) }}" method="POST">
             <label for="comment"><strong>Add Comment</strong></label>
@@ -82,7 +82,7 @@
         </form>
     </div>
 
-    <!-- Comments Section -->
+    <!-- comments section -->
     <div class="comments-section-card">
         <h2>Comments</h2>
         {% if ticket.get('Comments') %}
@@ -102,7 +102,7 @@
 
 <!-- ================== MODALS ================== -->
 
-<!-- Update Modal -->
+<!-- update modal -->
 <div id="updateModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeUpdate">&times;</span>
@@ -157,7 +157,7 @@
     </div>
 </div>
 
-<!-- Update Confirmation Modal -->
+<!-- update confirmation modal -->
 <div id="updateConfirmModal" class="modal">
   <div class="modal-content">
     <span class="close" id="closeUpdateConfirm">&times;</span>
@@ -170,7 +170,7 @@
   </div>
 </div>
 
-<!-- Generic Confirm Modal -->
+<!-- confirm modal -->
 <div id="confirmModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
@@ -185,7 +185,7 @@
   </div>
 </div>
 
-<!-- Full-screen Escalate Modal -->
+<!-- full screen escalate modal -->
 <div id="escalateModal" class="modal">
   <div class="modal-content">
     <span class="close" id="closeEscalate">&times;</span>
@@ -207,7 +207,7 @@
   </div>
 </div>
 
-<!-- Success Modal -->
+<!-- success modal -->
 <div id="successModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>

@@ -14,5 +14,5 @@ ID,Title,Description,Assignee,Severity,Status,Category,Submission DateTime,Comme
 123,Login Issue,User unable to login to internal system,Jacob Nguyen,Medium,Open,Security,22/02/2026 09:15:10,[]
 124,Keyboard faulty,Cannot type the letter 'M' on my keyboard. Please help,Olivia Davis,Low,Closed,Software,25/02/2026 19:30:10,[]
 125,IT Vending Machine Jammed,IT vending machine on floor one by the toilets is jammed. Tray at bottom wont open as keyboard is stuck sideways. Not able to use until keyboard removed,Olivia Davis,Medium,Closed,Software,25/02/2026 19:30:10,[]
-126,Laptop mouse scroll lagging,The mouse on my laptop mouse is not working as normal. The scroll lags making it hard for me to use.,Olivia Davis,Medium,Open,Software,28/02/2026 22:40:11,[]
-128,Yubikey missing,"Left my Yubikey on desk yesterday, no longer here this morning. Lost and found directed me to IT for help",Olivia,Low,Closed,Software,2026-02-28 23:33:58,[]
+126,Laptop mouse scroll lagging,The mouse on my laptop mouse is not working as normal. The scroll lags making it hard for me to use.,Olivia Davis,High,Open,Software,28/02/2026 22:40:11,[]
+128,Yubikey missing,"Left my Yubikey on desk yesterday, no longer here this morning. Lost and found directed me to IT for help",Olivia Davis,Low,Closed,Software,2026-02-28 23:33:58,[]

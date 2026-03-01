@@ -1,8 +1,6 @@
-# Import the Flask web framework and helper functions
-from flask import Flask, render_template, request, url_for, redirect, flash  # render_template displays HTML pages, request gets the form input
-from src.backend.helpdesk import tickets, save_tickets  # existing helpdesk ticket data and the save function
-from operator import itemgetter  # for sorting dicts by key
-from datetime import datetime # enables recording dates and times for tickets and logs
+from flask import Flask, render_template, request, url_for, redirect, flash  
+from src.backend.helpdesk import tickets, save_tickets 
+from datetime import datetime 
 import json
 import os
 import csv
@@ -10,22 +8,22 @@ import csv
 # Creating a new web app
 app = Flask(__name__)
 
-# Set the secret key for sessions (needed for flash messages)
-# Use environment variable if set, otherwise fallback to a dev key
+# setting the secret key for sessions (needed for flash messages)
+# using environment variable if set, otherwise fallback to a dev key
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-# Home page - shows dashboard with stats and recent tickets
+# home page - shows dashboard with stats and recent tickets
 @app.route("/")
 def home():
-    # Convert tickets dict to a list and sort by ID descending
+    # convert tickets dict to a list and sort by ID descending
     ticket_list = list(tickets.values())
     ticket_list.sort(key=lambda t: int(t["ID"]), reverse=True)  # newest first
 
-    # Take the first 5 tickets
+    # take the first 5 tickets
     recent_tickets = ticket_list[:5]
 
     severity_order = {"High": 0, "Medium": 1, "Low": 2}
-    # Sort the 5 tickets only
+    # sort the 5 tickets only
     recent_tickets.sort(key=lambda t: severity_order.get(t["Severity"], 3))
 
     return render_template(
@@ -34,25 +32,27 @@ def home():
         recent_tickets=recent_tickets
     )
 
-# All tickets page with optional filtering
+# all tickets page 
 @app.route("/tickets")
 def all_tickets():
-    filter_type = request.args.get("filter")  # read ?filter=Open or ?filter=High
+    filter_type = request.args.get("filter") 
     tickets_list = list(tickets.values())
 
-    # Apply filter if needed
+    # apply filter if needed
     if filter_type == "Open":
         tickets_list = [t for t in tickets_list if t["Status"] == "Open"]
     elif filter_type == "High":
         tickets_list = [t for t in tickets_list if t["Severity"] == "High"]
 
-    # Always send full tickets for the stats cards
-    return render_template("all_tickets.html", tickets=tickets_list, filter_type=filter_type, all_tickets=tickets.values())
+    assignees = get_assignees()
 
-# Add a new ticket
+    # always send full tickets for the stats cards
+    return render_template("all_tickets.html", tickets=tickets_list, filter_type=filter_type, all_tickets=tickets.values(), assignees=assignees)
+
+# add a new ticket
 @app.route("/add", methods=["GET", "POST"])
 def add_ticket_web():
-    # Dynamically generate a list of unique assignees from existing tickets
+    # create a list of unique assignees from existing tickets
     assignees = sorted({ticket["Assignee"] for ticket in tickets.values()})
 
     if request.method == "POST":
@@ -72,7 +72,7 @@ def add_ticket_web():
             "Severity": severity,
             "Status": status,
             "Category": "Software",
-            "Submission Date": "25/02/2026",  # can be updated dynamically
+            "Submission Date": "25/02/2026",  
             "Submission Time": "19:30:10"
         }
 
@@ -81,7 +81,7 @@ def add_ticket_web():
 
     return render_template("add.html", assignees=assignees)
 
-# View a ticket in detail
+# view a ticket in detail
 @app.route("/ticket/<ticket_id>")
 def view_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
@@ -92,7 +92,7 @@ def view_ticket_web(ticket_id):
     assignees = get_assignees()
     return render_template("view.html", ticket=ticket, comments=comments, assignees=assignees)
 
-# Update an existing ticket
+# updating an existing ticket
 @app.route("/update/<ticket_id>", methods=["GET", "POST"])
 def update_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
@@ -103,7 +103,7 @@ def update_ticket_web(ticket_id):
     assignees = get_assignees()
 
     if request.method == "POST":
-        # Update ticket fields
+        # update ticket fields
         ticket.update({
             "Title": request.form["title"],
             "Description": request.form["description"],
@@ -114,14 +114,13 @@ def update_ticket_web(ticket_id):
         })
         save_tickets(tickets)
 
-        # Flash success message and redirect to view_ticket
+        # flash success message and redirect to view_ticket
         flash(f"Ticket {ticket_id} updated successfully!", "success")
         return redirect(url_for("view_ticket_web", ticket_id=ticket_id))
 
-    # GET request → render the update form
     return render_template("update.html", ticket=ticket, assignees=assignees)
 
-# Delete a ticket
+# delete a ticket
 @app.route("/delete/<ticket_id>", methods=["GET", "POST"])
 def delete_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
@@ -154,7 +153,7 @@ def delete_ticket_web(ticket_id):
 
     return render_template("delete.html", ticket=ticket)
 
-# Add a comment to a ticket
+# add a comment to a ticket
 @app.route("/comment/<ticket_id>", methods=["GET", "POST"])
 def comment_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
@@ -183,7 +182,7 @@ def comment_ticket_web(ticket_id):
 
     return render_template("comment.html", ticket=ticket)
 
-# Close a ticket (auto-redirect after closing)
+# close a ticket (auto redirect after closing)
 @app.route("/close/<ticket_id>", methods=["POST"])
 def close_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
@@ -199,11 +198,25 @@ def close_ticket_web(ticket_id):
     flash(f"Ticket {ticket_id} closed successfully!", "success")
     return redirect(url_for("view_ticket_web", ticket_id=ticket_id))
 
+VALID_ASSIGNEES = ["Olivia Davis", "Ryan Smith", "Jacob Lee", "Benjamin Clark"]
+
 # helper function to get all unique assignees
 def get_assignees():
-    return sorted(set(ticket["Assignee"] for ticket in tickets.values()))
+    for ticket in tickets.values():
+        for ticket in tickets.values():
+            if ticket["Assignee"] not in VALID_ASSIGNEES:
+                # attempt to match partial name
+                for valid in VALID_ASSIGNEES:
+                    if ticket["Assignee"].lower() in valid.lower():
+                        ticket["Assignee"] = valid
+                        break
+                    else:
+                        ticket["Assignee"] = VALID_ASSIGNEES[0]  # fallback
 
-# Escalate a ticket (assign + set severity)
+    # always return full valid assignee list
+    return VALID_ASSIGNEES
+    
+# escalate a ticket (assign + set severity)
 @app.route("/escalate/<ticket_id>", methods=["GET", "POST"])
 def escalate_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
@@ -227,7 +240,7 @@ def escalate_ticket_web(ticket_id):
 
     return render_template("escalate.html", ticket=ticket, assignees=assignees)  
 
-# Run the app
+# run the app
 if __name__ == "__main__":
     print("Starting Flask app at http://127.0.0.1:5050")
     app.run(debug=True, port=5050)

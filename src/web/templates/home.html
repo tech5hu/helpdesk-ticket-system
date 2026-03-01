@@ -8,13 +8,13 @@
 <body>
     <div class="page-outer">
         <div class="page-wrapper">
-            <!-- Header -->
+            <!-- header -->
             <header class="dashboard-header">
                 <h1>Helpdesk Dashboard</h1>
                 <p class="dashboard-welcome">Welcome to Your Ticket Management System</p>
             </header>
 
-            <!-- Stats cards (clickable tabs) -->
+            <!-- stats cards (clickable tabs) -->
             <section class="stats-section">
                 <a href="{{ url_for('all_tickets') }}" class="stat-card">
                     <h2>Total Tickets</h2>
@@ -30,13 +30,13 @@
                 </a>
             </section>
 
-            <!-- Actions -->
+            <!-- actions -->
             <section class="actions-section">
                 <a href="{{ url_for('add_ticket_web') }}" class="btn">Add New Ticket</a>
                 <a href="{{ url_for('all_tickets') }}" class="btn">View All Tickets</a>
             </section>
 
-            <!-- Recent Tickets Cards -->
+            <!-- recent tickets cards -->
             <section class="recent-tickets">
                 <h2>Recent Tickets</h2>
                 <div class="recent-tickets-container">
