@@ -34,19 +34,21 @@ def load_tickets_from_csv():
                 ticket_id = int(row["ID"])
             except ValueError:
                 continue  # skip rows with invalid ID
-            comments = eval(row["Comments"]) if row.get("Comments") else []
+            # safely parse comments from csv string to list
+            comments = eval(row["Comments"]) if row.get("Comments") else []  # eval converts string to actual list
+            # handle old csv files that might have separate date and time columns
             submission_dt = row.get("Submission DateTime") or f"{row.get('Submission Date', '')} {row.get('Submission Time', '')}".strip()
 
             tickets[ticket_id] = {
                 "ID": ticket_id,
                 "Title": row["Title"],
                 "Description": row["Description"],
-                "Assignee": row.get("Assignee", ""),
-                "Severity": row.get("Severity", "Low"),
-                "Status": row.get("Status", "Open"),
-                "Category": row.get("Category", "Software"),
+                "Assignee": row.get("Assignee", ""),  # default empty string if missing
+                "Severity": row.get("Severity", "Low"),  # default low severity
+                "Status": row.get("Status", "Open"),  # default status open
+                "Category": row.get("Category", "Software"),  # default software
                 "Submission DateTime": submission_dt,
-                "Comments": comments
+                "Comments": comments  # store as list
             }
 
 def save_tickets_to_csv():
@@ -57,15 +59,15 @@ def save_tickets_to_csv():
         writer.writeheader()
         for t in tickets.values():
             row = t.copy()
-            row["Comments"] = str(row.get("Comments", []))
+            row["Comments"] = str(row.get("Comments", []))  # convert comments list back to string for csv
             writer.writerow(row)
-    print("tickets saved to csv.")
+    print("tickets saved to csv.")  # tells user that changes are saved
 
 # ai category and severity function
 def ai_suggest_category_severity(title, description):
     """getting ai suggestion for ticket category and severity, suppressing errors"""
     if not openai.api_key:
-        return "Software", "Low"
+        return "Software", "Low"  # default if no api key
     prompt = f"""
     suggest the most appropriate category and severity for a helpdesk ticket.
     categories: {CATEGORIES}
@@ -83,12 +85,12 @@ def ai_suggest_category_severity(title, description):
         )
         result = response.choices[0].message.content.strip()
         parts = [p.strip() for p in result.split(",")]
-        category = parts[0] if parts and parts[0] in CATEGORIES else "Software"
-        severity = parts[1] if len(parts) > 1 and parts[1] in SEVERITIES else "Low"
+        category = parts[0] if parts and parts[0] in CATEGORIES else "Software"  # check valid category
+        severity = parts[1] if len(parts) > 1 and parts[1] in SEVERITIES else "Low"  # check valid severity
         return category, severity
     except Exception:
         # silently suppress AI errors
-        return "Software", "Low"
+        return "Software", "Low"  # fallback if api fails
 
 # add ticket function
 def add_ticket_ai():
@@ -109,7 +111,7 @@ def add_ticket_ai():
         "Severity": severity,
         "Status": "Open",
         "Category": category,
-        "Submission DateTime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Submission DateTime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # record current date/time
         "Comments": []
     }
     save_tickets_to_csv()
@@ -187,8 +189,8 @@ def comment_ticket(tickets):
         now = datetime.now()
         tickets[ticket_id]['Comments'].append({
             "Author": author,
-            "Date": now.strftime("%Y-%m-%d"),
-            "Time": now.strftime("%H:%M:%S"),
+            "Date": now.strftime("%Y-%m-%d"),  # record date
+            "Time": now.strftime("%H:%M:%S"),  # record time
             "Content": comment
         })
         save_tickets_to_csv()
@@ -216,7 +218,7 @@ def auto_escalate_high_severity():
     """automatically escalate any open high severity tickets"""
     for t in tickets.values():
         if t['Severity'] == "High" and t['Status'] != "Closed":
-            print(f"ticket {t['ID']} is high severity and open! automatically suggesting escalation.")
+            print(f"ticket {t['ID']} is high severity and open! automatically suggesting escalation.")  # alerts user
 
 # menu display + loop
 def show_menu():
