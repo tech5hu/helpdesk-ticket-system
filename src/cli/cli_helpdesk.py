@@ -3,6 +3,8 @@ import csv
 from datetime import datetime
 from src.backend.helpdesk import delete_ticket 
 import openai  # using OpenAI to suggest ticket categories and severity
+from dotenv import load_dotenv
+import ast
 
 # csv file path
 CSV_FILE = "../data/helpdesk.csv"
@@ -10,12 +12,13 @@ CSV_FILE = "../data/helpdesk.csv"
 # tickets dictionary (loaded from csv at startup)
 tickets = {}
 
+load_dotenv()  # loads .env from project root
 # set up OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # warning if the key isn’t set
 if not openai.api_key:
-    print("warning: OPENAI_API_KEY not set. ai suggestions will default to 'Software' category and 'Low' severity.")
+    print("warning: OPENAI_API_KEY not set. AI suggestions will default to 'Software' category and 'Low' severity.")
 
 # defining available categories and severities
 CATEGORIES = ["Hardware", "Software", "Network", "Security"]
@@ -35,7 +38,7 @@ def load_tickets_from_csv():
             except ValueError:
                 continue  # skip rows with invalid ID
             # safely parse comments from csv string to list
-            comments = eval(row["Comments"]) if row.get("Comments") else []  # eval converts string to actual list
+            comments = ast.literal_eval(row["Comments"]) if row.get("Comments") else []  # eval converts string to actual list
             # handle old csv files that might have separate date and time columns
             submission_dt = row.get("Submission DateTime") or f"{row.get('Submission Date', '')} {row.get('Submission Time', '')}".strip()
 
