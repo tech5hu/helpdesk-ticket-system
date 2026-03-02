@@ -1,10 +1,12 @@
+import sys
 import os
 import csv
 from datetime import datetime
-from src.backend.helpdesk import delete_ticket 
 import openai  # using OpenAI to suggest ticket categories and severity
 from dotenv import load_dotenv
 import ast
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # build absolute path to project root
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
