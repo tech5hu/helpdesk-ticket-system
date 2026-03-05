@@ -72,12 +72,13 @@ def add_ticket_web():
             "Severity": severity,
             "Status": status,
             "Category": "Software",
-            "Submission Date": datetime.now().strftime("%d/%m/%Y"),  
-            "Submission Time": datetime.now().strftime("%H:%M:%S")
+            "Submission DateTime": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),  
+            "Comments": []
         }
 
         save_tickets(tickets)
-        return render_template("add_success.html", ticket_id=ticket_id, title=title)
+        flash(f"Ticket {ticket_id} added successfully!", "success")
+        return redirect(url_for("view_ticket_web", ticket_id=ticket_id))
 
     return render_template("add.html", assignees=assignees)
 
@@ -121,36 +122,26 @@ def update_ticket_web(ticket_id):
     return render_template("update.html", ticket=ticket, assignees=assignees)
 
 # delete a ticket
-@app.route("/delete/<ticket_id>", methods=["GET", "POST"])
+@app.route("/delete_ticket/<ticket_id>", methods=["GET", "POST"])
 def delete_ticket_web(ticket_id):
     ticket = tickets.get(ticket_id)
     if not ticket:
-        return render_template(
-            "message.html",
-            message=f"Ticket {ticket_id} not found.",
-            back_url=url_for("home"),
-            card_class="error",
-        )
+        flash("Ticket not found.", "error")
+        return redirect(url_for("home"))
 
     if request.method == "POST":
         confirm = request.form.get("confirm")
         if confirm == "yes":
+            # Remove ticket and save
             tickets.pop(ticket_id)
             save_tickets(tickets)
-            return render_template(
-                "message.html",
-                message=f"Ticket {ticket_id} deleted successfully!",
-                back_url=url_for("home"),
-                card_class="success",
-            )
+            flash(f"Ticket #{ticket_id} deleted successfully!", "success")
+            return redirect(url_for("home"))
         else:
-            return render_template(
-                "message.html",
-                message="Deletion cancelled.",
-                back_url=url_for("view_ticket_web", ticket_id=ticket_id),
-                card_class="info",
-            )
+            # If somehow POST received without 'yes', go back
+            return redirect(url_for("view_ticket_web", ticket_id=ticket_id))
 
+    # GET request – show the delete confirmation page
     return render_template("delete.html", ticket=ticket)
 
 # add a comment to a ticket

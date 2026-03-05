@@ -1,12 +1,10 @@
-// modals
-
 // update modal
 const updateModal = document.getElementById('updateModal');
 const updateBtn = document.getElementById('updateBtn');
 const closeUpdate = document.getElementById('closeUpdate');
 const updateForm = updateModal.querySelector('form');
 
-// confirm modal (for update confirmation)
+// create confirmation modal for updates
 const updateConfirmModal = document.createElement('div');
 updateConfirmModal.classList.add('modal');
 updateConfirmModal.style.display = 'none';
@@ -25,33 +23,34 @@ document.body.appendChild(updateConfirmModal);
 const confirmYes = updateConfirmModal.querySelector('#confirmYes');
 const confirmNo = updateConfirmModal.querySelector('#confirmNo');
 
-// open/close update modal
 updateBtn.onclick = () => updateModal.style.display = 'flex';
 closeUpdate.onclick = () => updateModal.style.display = 'none';
-window.onclick = (e) => { 
-    if(e.target === updateModal) updateModal.style.display = 'none';
-};
 
-// update form confirmation 
-updateForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // prevent default submission
-    updateModal.style.display = 'none'; // hide the update modal
-    updateConfirmModal.style.display = 'flex'; // show confirmation modal
+// update form confirmation
+updateForm.addEventListener('submit', e => {
+    e.preventDefault();
+    updateModal.style.display = 'none';
+    updateConfirmModal.style.display = 'flex';
 });
 
-// if user confirms update
-confirmYes.onclick = () => {
-    updateConfirmModal.style.display = 'none';
-    updateForm.submit(); // actually submit the form
-};
+confirmYes.onclick = () => { updateConfirmModal.style.display = 'none'; updateForm.submit(); };
+confirmNo.onclick = () => { updateConfirmModal.style.display = 'none'; updateModal.style.display = 'flex'; };
 
-// if user cancels update
-confirmNo.onclick = () => {
-    updateConfirmModal.style.display = 'none';
-    updateModal.style.display = 'flex'; // bring back the update modal
-};
+// delete modal
+const deleteModal = document.getElementById("deleteModal");
+const deleteForm = document.getElementById("deleteForm");
+const closeDelete = document.getElementById("closeDeleteModal");
+const cancelDelete = document.getElementById("cancelDeleteBtn");
 
-// confirmation modal (delete / close) 
+function openDeleteModal(ticketId) {
+    deleteForm.action = `/delete_ticket/${ticketId}`; // Flask route
+    deleteModal.style.display = "flex";
+}
+
+closeDelete.onclick = () => deleteModal.style.display = "none";
+cancelDelete.onclick = () => deleteModal.style.display = "none";
+
+// confirm modal
 const confirmModal = document.getElementById('confirmModal');
 const modalTitle = document.getElementById('modalTitle');
 const modalMessage = document.getElementById('modalMessage');
@@ -69,25 +68,17 @@ function openConfirmModal(title, message, formAction) {
 confirmClose.onclick = () => confirmModal.style.display = 'none';
 cancelBtn.onclick = () => confirmModal.style.display = 'none';
 
-// escalate modal 
+// esclate modal
 const escalateModal = document.getElementById('escalateModal');
 const escalateBtn = document.getElementById('escalateBtn');
 const escalateClose = document.getElementById('closeEscalate');
 const cancelEscalateBtn = document.getElementById('cancelEscalateBtn');
 
-if (escalateBtn) {
-    escalateBtn.onclick = () => escalateModal.style.display = 'flex';
-}
+if (escalateBtn) escalateBtn.onclick = () => escalateModal.style.display = 'flex';
 if (escalateClose) escalateClose.onclick = () => escalateModal.style.display = 'none';
 if (cancelEscalateBtn) cancelEscalateBtn.onclick = () => escalateModal.style.display = 'none';
 
-// close modals when clicking outside
-window.onclick = (event) => { 
-    if(event.target == escalateModal) escalateModal.style.display = 'none';
-    // keep other modals behavior
-};
-
-// success modal
+// Success modal
 const successModal = document.getElementById('successModal');
 const successClose = successModal.querySelector('.close');
 const successCloseBtn = document.getElementById('successCloseBtn');
@@ -101,13 +92,12 @@ function showSuccess(message) {
 successClose.onclick = () => successModal.style.display = 'none';
 successCloseBtn.onclick = () => successModal.style.display = 'none';
 
-// close modals when clicking outside 
+// Click outside to close
 window.onclick = (event) => { 
+    if(event.target === updateModal) updateModal.style.display = 'none';
+    if(event.target === updateConfirmModal) updateConfirmModal.style.display = 'none';
+    if(event.target === deleteModal) deleteModal.style.display = 'none';
     if(event.target === confirmModal) confirmModal.style.display = 'none';
     if(event.target === escalateModal) escalateModal.style.display = 'none';
-    if(event.target === successModal) {
-        successModal.style.display = 'none';
-        successModal.classList.remove('active');
-    }
-    if(event.target === updateConfirmModal) updateConfirmModal.style.display = 'none';
+    if(event.target === successModal) successModal.style.display = 'none';
 };
