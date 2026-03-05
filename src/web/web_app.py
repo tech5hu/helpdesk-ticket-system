@@ -52,8 +52,8 @@ def all_tickets():
 # add a new ticket
 @app.route("/add", methods=["GET", "POST"])
 def add_ticket_web():
-    # create a list of unique assignees from existing tickets
-    assignees = sorted({ticket["Assignee"] for ticket in tickets.values()})
+    # using full valid assignee list
+    assignees = VALID_ASSIGNEES
 
     if request.method == "POST":
         title = request.form["title"]
@@ -72,8 +72,8 @@ def add_ticket_web():
             "Severity": severity,
             "Status": status,
             "Category": "Software",
-            "Submission Date": "25/02/2026",  
-            "Submission Time": "19:30:10"
+            "Submission Date": datetime.now().strftime("%d/%m/%Y"),  
+            "Submission Time": datetime.now().strftime("%H:%M:%S")
         }
 
         save_tickets(tickets)
@@ -198,21 +198,10 @@ def close_ticket_web(ticket_id):
     flash(f"Ticket {ticket_id} closed successfully!", "success")
     return redirect(url_for("view_ticket_web", ticket_id=ticket_id))
 
-VALID_ASSIGNEES = ["Olivia Davis", "Ryan Smith", "Jacob Lee", "Benjamin Clark"]
+VALID_ASSIGNEES = ["Olivia Davis", "Ryan Collins", "Jacob Nguyen", "Benjamin Jackson"]
 
 # helper function to get all unique assignees
 def get_assignees():
-    for ticket in tickets.values():
-        for ticket in tickets.values():
-            if ticket["Assignee"] not in VALID_ASSIGNEES:
-                # attempt to match partial name
-                for valid in VALID_ASSIGNEES:
-                    if ticket["Assignee"].lower() in valid.lower():
-                        ticket["Assignee"] = valid
-                        break
-                    else:
-                        ticket["Assignee"] = VALID_ASSIGNEES[0]  # fallback
-
     # always return full valid assignee list
     return VALID_ASSIGNEES
     
